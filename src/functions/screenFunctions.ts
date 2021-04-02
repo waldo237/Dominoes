@@ -11,5 +11,8 @@ function printDoubles(side1: number, side2: number): void {
         console.log(`    ⌜      ⌝\n` + `     ` + `${side1} | ${side2}\n` + `    ⌞      ⌟`);
     }
 }
+function printGameHeadings(heading:string) {
+    console.log(`       ${heading}`)
+}
 
-export { printDoubles, printGreaterDown, printGreaterUp }
+export { printDoubles, printGreaterDown, printGreaterUp, printGameHeadings }
