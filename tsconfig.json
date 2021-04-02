@@ -8,6 +8,6 @@
       "outDir": "dist",
       "sourceMap": true
     },
-    "include": ["src/**/*"],
+    "include": ["src/**/*", "src/functions/screenFunction.test.ts"],
     "exclude": ["node_modules", "**/*.spec.ts"]
   }
