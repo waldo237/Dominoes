@@ -44,11 +44,37 @@ El juego de domino
   - ![](Entitties of Prueba Intellisys D. Corp.jpg)Debes imprimir en la consola cada jugada, o alguna otra forma gráfica de validarlas.
 
 **Design** :
-
 Translate the requirement by writing a unit test. If you have hot reloading set up, the unit test will run and fail as no code is implemented yet.
-    -test1: verifyCombinations(): •	Todas las combinaciones posibles de 0-6 por cada numero
-    -test2: dealerHas28(): • retorna el numero total de dominos existentes en el Dealer(storage) dominos, esta tiene que ser 
 
+    -test0: There are 4 players🧪: verifica que en el juego solo hayan 4 jugadores despues de aplicar • createPlayers() 
+    -test1: teams have 2 players🧪: • verifica la existencia de 2 equipos y que tengan sus dos jugadores despues de aplicar createTeams()
+    -test2: There are 7 combinations por numero en lado de domino🧪: •	Todas las combinaciones posibles de 0-6 por cada numero
+    -test3: The dealer has 28 dominoes🧪: • retorna el numero total de dominos existentes en el Dealer(storage), esta tiene que ser exactamente 28
+    -test4: each player has 7 dominoes🧪: • una vez creados los jugadores y los equipos, se reparte, cada jugador debe tener 7 fichas(in their array) al final de la reparticion.
+    -test5: Round restarted when a player has 3 doubles🧪: • verifica que la partida es reiniciada en si algún jugador tiene más de 3 dobles. in function playerHas3Doubles
+     que inicie el jugador que tenga doble seis.
+
+    -test6: The next player plays if domino matches 🧪: • cada jugador coloca una ficha en uno de los extremos de la cadena si va por un solo lado.
+    - test7: The dealer forced the next move 🧪: • Cuando un jugador tiene una sola opción de colocar ficha, después de 3 segundos,  el programa lo hace automáticamente.
+    - test8: The next move was randomized 🧪: • Cuando un jugador tiene más de una opción para jugar: utiliza un algoritmo random para decidir la jugada.
+    - test9: Next player is skipped if dominoes don't have match 🧪: • en caso contrario debe pasar.
+    - Las fichas van formando una cadena, los extremos iguales de las fichas se colocan juntos.
+    
+    - Las fichas dobles, que se colocan en dirección perpendicular a la cadena.
+    - Cuando uno de los 4 jugadores coloca todas sus fichas: la mano es ganada por la pareja a la que pertenece dicho jugador.
+    - Tranque: cuando ninguno de los 4 jugadores puede seguir colocando ninguna de sus fichas: se suman los puntos de las fichas que no han sido jugadas de cada pareja, gana la suma menor.
+    - En caso de empate, la mano no cuenta a efectos de puntuación.
+    - Al terminar la partida, la pareja ganadora obtiene la suma de todos los puntos de las fichas que no han sido colocadas por los cuatro jugadores.
+    - las siguientes, es el ganador de la mano anterior.
+    - Vence la partida la pareja que alcanza la puntuación acordada.
+
+    1. Haz un programa que prepare el inicio de un juego de dominoes. Esto incluye la estructura de datos de las piezas, barajarlas, y repartirlas entre 4 jugadores. Para probar, el juego puede imprimir en la consola las piezas de cada jugador.
+
+    1. Haz un programa que juegue una mano de dominoes
+    - que inicie el jugador que tenga doble seis
+    - y que siga jugando el próximo jugador.
+    - Cuando un jugador tiene más de una opción para jugar: utiliza un algoritmo random para decidir la jugada.
+    - Debes imprimir en la consola cada jugada, o alguna otra forma de validarlas.
 **Implementation:**
 
 Write and implement the code that fulfills the requirement. Run all tests and they should pass, if not repeat this step.
