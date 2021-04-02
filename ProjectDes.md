@@ -4,7 +4,7 @@ Read, understand, and process the feature.
 
 El juego de domino
 
-- 28 fichas rectangulares
+- 28 fichas
 - 0 hasta 6
 - Todas las combinaciones posibles de 0-6 (can use recursión)
 - 7 fichas diferentes para cada uno de los números (can be the base case of a recursive function).
@@ -25,7 +25,7 @@ El juego de domino
 - Tranque: cuando ninguno de los 4 jugadores puede seguir colocando ninguna de sus fichas: se suman los puntos de las fichas que no han sido jugadas de cada pareja, gana la suma menor.
 - En caso de empate, la mano no cuenta a efectos de puntuación.
 - Al terminar la partida, la pareja ganadora obtiene la suma de todos los puntos de las fichas que no han sido colocadas por los cuatro jugadores.
-- ~~En sucesivas manos, comienza el jugador siguiente al que lo hizo en la mano anterior.~~
+- las siguientes, es el ganador de la mano anterior.
 - Vence la partida la pareja que alcanza la puntuación acordada.
 
 1. Haz un programa que prepare el inicio de un juego de dominoes. Esto incluye la estructura de datos de las piezas, barajarlas, y repartirlas entre 4 jugadores. Para probar, el juego puede imprimir en la consola las piezas de cada jugador.
@@ -47,7 +47,8 @@ El juego de domino
 
 Translate the requirement by writing a unit test. If you have hot reloading set up, the unit test will run and fail as no code is implemented yet.
     -test1: verifyCombinations(): •	Todas las combinaciones posibles de 0-6 por cada numero
-    
+    -test2: dealerHas28(): • retorna el numero total de dominos existentes en el Dealer(storage) dominos, esta tiene que ser 
+
 **Implementation:**
 
 Write and implement the code that fulfills the requirement. Run all tests and they should pass, if not repeat this step.
