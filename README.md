@@ -29,7 +29,7 @@ El juego de domino
 - Haz un programa que juegue un juego hasta los 200 puntos
 - la primera mano abre con doble seis
 - Debes imprimir en la consola cada jugada, o alguna otra forma gráfica de validarlas.
-  <img src="Entitties of Prueba Intellisys D. Corp.jpg"
+  <img src="src\Prueba Intellisys D. Corp.jpg"
      alt="diagram"
      style="float: left; margin-right: 10px;" />
 
