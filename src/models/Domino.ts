@@ -1,19 +1,26 @@
-type numRange = 0 | 1 | 2 | 3 | 4 | 5 | 6;
+type numRange = |0 | 1 | 2 | 3 | 4 | 5 | 6;
 
 export class Domino {
     private _side1: numRange;
     private _side2: numRange;
-    private _frontInTheChain = 0;
+    private _prev:number |null = null;
+    private _next:number |null = null;
 
     constructor(side1: numRange, side2: numRange) {
         this._side1 = side1;
         this._side2 = side2;
     }
-    public get frontInTheChain(): number {
-        return this._frontInTheChain;
+    public get prev():number |null {
+        return this._prev;
     }
-    public set frontInTheChain(value: number) {
-        this._frontInTheChain = value;
+    public set prev(value:number |null) {
+        this._prev = value;
+    }
+    public get next():number |null {
+        return this._next;
+    }
+    public set next(value:number |null) {
+        this._next = value;
     }
 
     public get side2(): numRange {
@@ -28,7 +35,7 @@ export class Domino {
         return this._side1 + this._side2;
     }
     public isDouble(): boolean {
-        return this._side1 === this.side2
+        return this._side1 === this.side2;
     }
     public isDoubleSix(): boolean {
         return this._side1 === 6 && this._side1 === 6;

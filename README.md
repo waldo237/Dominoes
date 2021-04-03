@@ -48,7 +48,7 @@ Translate the requirement by writing a unit test. If you have hot reloading set 
     - test7: 🧪The dealer forced the next move 🧪: • Cuando un jugador tiene una sola opción de colocar ficha, después de 3 segundos,  el programa lo hace automáticamente.
     - test8:🧪 The next move was randomized 🧪: • Cuando un jugador tiene más de una opción para jugar: utiliza un algoritmo random para decidir la jugada.
     - test9:🧪 Next player is skipped if dominoes don't have match 🧪: • en caso contrario debe pasar.
-    - test10: 🧪 The next matching domino is added to the correct end of the chain with the frontInTheChain property properly pointed outwards 🧪: •  Las fichas van formando una cadena, los extremos iguales de las fichas se colocan juntos.
+    - test10: 🧪 The next matching domino is added to the correct end of the chain with the next property properly pointed outwards 🧪: •  Las fichas van formando una cadena, los extremos iguales de las fichas se colocan juntos.
 
     - test 11: 🧪 On the console, the doubles go horizontally 🧪 : • Las fichas dobles, que se colocan en dirección perpendicular a la cadena.
 

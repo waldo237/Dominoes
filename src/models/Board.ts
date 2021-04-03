@@ -1,26 +1,37 @@
-import { DominoesChain } from "./schemas";
+import DominoesChain from "./DominoesChain";
 import { Team } from "./Team";
 import { Player } from "./Player";
 
-class Board {
+
+
+class Board{
     private static instance: Board;
-    private _topPoints = 200;
-    private _rounds = 0;
-    private _team1: Team | null = null;
-    private _team2: Team | null = null;
-    private _nextRoundStarter: Player | null = null;
-    private _nextPlayer: Player | null = null;
-    private _currentPlayer: Player | null = null;
-    private _dominoesDisplay: DominoesChain | null = null;
+     private _topPoints = 200;
+     private _rounds = 0;
+     private _team1: Team | null = null;
+     private _team2: Team | null = null;
+     private _nextRoundStarter: Player | null = null;
+     private _nextPlayer: Player | null = null;
+     private _currentPlayer: Player | null = null;
+     private _dominoesDisplay: DominoesChain | null = null;
+     //##################debugging only ########################################
+     public set dominoesDisplay(value: DominoesChain | null) {
+        this._dominoesDisplay = value;
+    }
+    public get dominoesDisplay(): DominoesChain | null {
+        return this._dominoesDisplay;
+    }
+    //##########################################################
 
     // eslint-disable-next-line @typescript-eslint/no-empty-function
-    private constructor() { }
+    private constructor() {}
     public static getInstance(): Board {
         if (!Board.instance) {
             Board.instance = new Board();
         }
         return Board.instance;
     }
+
     init(team1: Team, team2: Team, dominoesDisplay: DominoesChain) {
         this._team1 = team1;
         this._team2 = team2;
@@ -52,9 +63,7 @@ class Board {
         return this._team2;
     }
 
-    public get dominoesDisplay(): DominoesChain | null {
-        return this._dominoesDisplay;
-    }
+  
     public get rounds(): number {
         return this._rounds;
     }
@@ -65,6 +74,17 @@ class Board {
     public get topPoints(): number {
         return this._topPoints;
     }
+ 
+
+/**
+ * triggers the output to the console using 
+ * the internal dominoes display and its print
+ * formatter to output content to the screen.
+ */
+public print():void {
+    this.dominoesDisplay?.print();
+    
+}
 }
 
 export default Board;

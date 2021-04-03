@@ -1,4 +1,4 @@
-import { pickOne } from "../functions/util";
+import { pickOne } from "../functions and utilities/util";
 import { Domino } from "./Domino";
 import { Leads } from "./schemas";
 
