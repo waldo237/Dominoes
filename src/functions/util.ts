@@ -1,4 +1,4 @@
-function pickOne(selection: []) {
+function pickOne<T>(selection: T[]):T {
     const index = Math.round((Math.random() * selection.length - 1) + 0);
     return selection[index];
 }
@@ -26,3 +26,5 @@ function shuffler<T>(items: T[], itemsLeft: number): T[] {
 export function swap<T>(array: T[], a: number, b: number): T[] {
     return [array[a], array[b]] = [array[b], array[a]];
 }
+
+export {shuffleWithRecursion, pickOne}

@@ -1,4 +1,6 @@
-import { Team, Player, DominoesChain } from "./schemas";
+import { DominoesChain } from "./schemas";
+import { Team } from "./Team";
+import { Player } from "./Player";
 
 class Board {
     private static instance: Board;
@@ -64,3 +66,5 @@ class Board {
         return this._topPoints;
     }
 }
+
+export default Board;

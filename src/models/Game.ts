@@ -1,7 +1,7 @@
 
 class Game {
     private static instance: Game;
-    private _rules: [Rules] | [] = [];
+    private _rules: Rules[] = [];
 
     // eslint-disable-next-line @typescript-eslint/no-empty-function
     private constructor() { }
@@ -11,10 +11,10 @@ class Game {
         }
         return Game.instance;
     }
-    public get rules(): [Rules] | [] {
+    public get rules(): Rules[] {
         return this._rules;
     }
-    public set rules(value: [Rules] | []) {
+    public set rules(value: Rules[]) {
         this._rules = value;
     }
     Run(): void {

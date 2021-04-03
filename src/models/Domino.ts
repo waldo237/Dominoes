@@ -34,3 +34,5 @@ export class Domino {
         return this._side1 === 6 && this._side1 === 6;
     }
 }
+
+export default Domino;

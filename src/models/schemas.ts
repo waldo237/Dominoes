@@ -1,61 +1,30 @@
-import { pickOne } from "../functions/util";
 import { Domino } from "./Domino";
+import { DoublyLinkedList } from "./DoublyLinkedList";
 
-class Leads {
-    lead1: number;
-    lead2: number;
-    constructor(lead1: number, lead2: number) {
+export class Leads {
+    lead1?: number;
+    lead2?: number;
+    constructor(lead1?: number, lead2?: number) {
         this.lead1 = lead1;
         this.lead2 = lead2;
     }
 }
 
-export class Player {
-    private dominoes: [Domino] | [] = []
-    private _name: string;
-    constructor(name: string) {
-        this._name = name;
-    }
-    public get name(): string {
-        return this._name;
-    }
-    public set name(value: string) {
-        this._name = value;
-    }
-    public play(leads: Leads): Domino {
-        const selection = this.dominoes.filter((currentDomino) => {
-            return currentDomino.side1 === leads.lead1 ||
-                currentDomino.side2 === leads.lead1 ||
-                currentDomino.side1 === leads.lead2 ||
-                currentDomino.side2 === leads.lead2
-        })
-       return pickOne<Domino>(selection);
-    }
-    
-    public receiveDominoes([Domino]): void {
+ class DominoesChain extends DoublyLinkedList<Domino> {
 
+    constructor() {
+        super()
     }
-    public pass(): boolean {
-
+    addDomino(domino:Domino){
+        this.head?.data.frontInTheChain === 
     }
-    public hasDominoes(): boolean {
-        return this.dominoes.length > 0;
-    }
-
-}
-
-export class Team {
-    constructor(parameters) {
-
+    showLeads(): Leads{
+      const  lead1 = this.head?.data.frontInTheChain;
+      const  lead2 = this.tail?.data.frontInTheChain;
+        const  leads = new Leads(lead1 , lead2);
+        return leads;
     }
 }
+const chain = new DominoesChain();
 
-export class DominoesChain {
-    private head: Domino
-    private tail: Domino
-    private body: [Domino]
-    constructor(parameters) {
-
-    }
-}
 export { Domino }
