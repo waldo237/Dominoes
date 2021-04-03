@@ -1,4 +1,4 @@
-type numRange = |0 | 1 | 2 | 3 | 4 | 5 | 6;
+type numRange = |0 | 1 | 2 | 3 | 4 | 5 | 6|number;
 
 export class Domino {
     private _side1: numRange;
@@ -42,4 +42,4 @@ export class Domino {
     }
 }
 
-export default Domino;
+export default Domino; export type {numRange}

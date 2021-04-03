@@ -4,7 +4,7 @@ import Board from "./models/Board";
 
 import DominoesChain from "./models/DominoesChain";
 import { Team } from "./models/Team";
-import { populateDominoes } from "./functions and utilities/util";
+import { populateDominoes, shuffleWithRecursion } from "./functions and utilities/util";
 function main() {
   const board = Board.getInstance();
   const mock_domino = new Domino(3, 3);
@@ -34,6 +34,14 @@ function main() {
 
 const mock_domino = new Domino(3, 3);
 // main()
-const mem = {}
-console.log(populateDominoes(mem, 28 ));
+function compare(a:Domino, b:Domino) {
+  if (a.side2 > b.side2) {
+    return 1;
+  }else{
+    return -1
+  }
+
+}
+const pupulated = populateDominoes();
+console.log( pupulated.sort(compare));
 export default main;

@@ -1,62 +1,92 @@
 import Domino from "../models/Domino";
 
-function pickOne<T>(selection: T[]):T {
+/**
+ * takes in an array and randomly picks one element
+ * @param selection 
+ * @returns 
+ */
+function pickOne<T>(selection: T[]): T {
     const index = Math.round((Math.random() * selection.length - 1) + 0);
     return selection[index];
 }
-// TODO turn to recursion
-export function shuffle<T>(array: T[]) {
-    for (let i = array.length - 1; i > 0; i--) {
-        const randomIndex = Math.floor(Math.random() * (i + 1));
-        swap(array, i, randomIndex);
-    }
-    return array;
-}
 
-function shuffleWithRecursion<T>(items: T[]) {
+/**
+ * shuffles an array using recursion
+ * @param items 
+ * @returns 
+ */
+function shuffleWithRecursion<T>(items: T[]):T[] {
     const index = items.length - 1;
     return shuffler(items, index);
 }
 
+/**
+ * helper function for shuffleWithRecursion
+ * @param items 
+ * @param itemsLeft 
+ * @returns 
+ */
 function shuffler<T>(items: T[], itemsLeft: number): T[] {
-    if (itemsLeft === 0) { return items; } //base case
+    if (itemsLeft === 0) return items; //base case
 
-    const randomNum: number = Math.floor(Math.random() * itemsLeft--);
-    return shuffler(swap(items, itemsLeft, randomNum), itemsLeft--);
+    const randomNum: number = Math.floor(Math.random() * (itemsLeft - 1));
+    swap(items, itemsLeft, randomNum);
+    return shuffler(items, itemsLeft-1);
 }
 
-export function swap<T>(array: T[], a: number, b: number): T[] {
-    return [array[a], array[b]] = [array[b], array[a]];
+/**
+ * swaps variables using array destructuring syntax. Does not need return
+ * because it's done by reference.
+ * @param array 
+ * @param a 
+ * @param b 
+ * @returns 
+ */
+export function swap<T>(array: T[], a: number, b: number):void {
+     [array[a], array[b]] = [array[b], array[a]];
 }
 
-// eslint-disable-next-line @typescript-eslint/ban-types
-function randDominoNum() {
-    return Math.floor(Math.random() * (28/4));
+/**
+ * allows to use objects as maps in Typescript
+ */
+type hashMap = {
+    [key: string]: boolean
 }
-function populateDominoes<T>( mem:{[key: string]: Domino},  toCreate:number):any{
-    if(toCreate === 0) return mem;
-    
-  
-    if(!mem[randomNum]){
-      const dom = new Domino(randomNum)
-    
-        mem[randomNum] = randomNum
-        
+
+/**
+ * The function recurses to create nominoes with numbers from 0-6
+ * @param dominoes an empty array of dominoes 
+ * @returns returns an array with 28 dominoes
+ */
+function populateDominoes(): Domino[] {
+    const index = 6, indexX6 = 6;
+    const dominoes: Domino[] = [];
+    const memo: hashMap = {};
+    return populateDominoesHepper(dominoes, index - 1, indexX6, memo);
+}
+
+/**
+ * helper function for populateDominoes
+ * @param dominoes 
+ * @param index 
+ * @param indexX6 
+ * @param memo 
+ * @returns 
+ */
+function populateDominoesHepper(dominoes: Domino[], index: number, indexX6: number, memo: hashMap): Domino[] {
+    if (indexX6 === 0) return dominoes; //base case
+
+    if (index === -1) { //re-start first counter
+        indexX6 -= 1;
+        index = 6;
     }
-    return populateDominoes( mem,  toCreate-1);
-}
-
-function sidePopulator<T>( items:T[], domino:Domino, mem:{[key: string]:string}, zeroTo6:numRange):T[]{
-    if(zeroTo6 === 0) return items;
-    
-  
-    if(!mem[`${zeroTo6}-${zeroTo6-1}`]){
-      const dom = new Domino(zeroTo6, zeroTo6-1)
-    
-        mem[randomNum] = randomNum
-        
+    const pairHash = [index, indexX6].sort().join();
+    if (!memo[pairHash]) { //momoize the values that are already in results.
+        memo[pairHash] = true;
+        dominoes.push(new Domino(index, indexX6))
     }
-    return sidePopulator( mem,  zeroTo6-1);
+    return populateDominoesHepper(dominoes, index - 1, indexX6, memo);
 }
 
-export {shuffleWithRecursion, pickOne, populateDominoes}
+
+export { shuffleWithRecursion, pickOne, populateDominoes }
