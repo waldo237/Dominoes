@@ -26,9 +26,6 @@ El juego de domino
 - En caso de empate, la mano no cuenta a efectos de puntuación.
 - Al terminar la partida, la pareja ganadora obtiene la suma de todos los puntos de las fichas que no han sido colocadas por los cuatro jugadores.
 - Vence la partida la pareja que alcanza la puntuación acordada.
-
-1.
-
 - Haz un programa que juegue un juego hasta los 200 puntos
 - la primera mano abre con doble seis
 - Debes imprimir en la consola cada jugada, o alguna otra forma gráfica de validarlas.
@@ -45,9 +42,8 @@ Translate the requirement by writing a unit test. If you have hot reloading set 
     - test3: 🧪The dealer has 28 dominoes🧪: • retorna el numero total de dominos existentes en el Dealer(storage), esta tiene que ser exactamente 28
     - test4: 🧪each player has 7 dominoes🧪: • una vez creados los jugadores y los equipos, se reparte, cada jugador debe tener 7 fichas(in their hashtable) al final de la reparticion.
     - test5: 🧪Round restarted when a player has 3 doubles🧪: • verifica que la partida es reiniciada en si algún jugador tiene más de 3 dobles. in function playerHas3Doubles
-    🧪The very first game was started by the player with [6|6]🧪: •  que inicie el jugador que tenga doble seis.
-
-    - y que siga jugando el próximo jugador.
+     - test5.1: 🧪The very first game was started by the player with [6|6]🧪: •  que inicie el jugador que tenga doble seis.
+    - test5.1: 🧪After round starter, player1 from the opposite team continued playing🧪: - y que siga jugando el próximo jugador.
     - test6: 🧪The next player plays if domino matches 🧪: • cada jugador coloca una ficha en uno de los extremos de la cadena si va por un solo lado.
     - test7: 🧪The dealer forced the next move 🧪: • Cuando un jugador tiene una sola opción de colocar ficha, después de 3 segundos,  el programa lo hace automáticamente.
     - test8:🧪 The next move was randomized 🧪: • Cuando un jugador tiene más de una opción para jugar: utiliza un algoritmo random para decidir la jugada.

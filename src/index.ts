@@ -1,5 +1,5 @@
 import { printDoubles, printGameHeadings, printGreaterDown, printGreaterUp } from "./functions/screenFunctions";
-import { Domino } from "./models/schemas";
+import { Domino } from "./models/Domino";
 function main() {
   const newDomino = new Domino(6,4)
   console.log(newDomino)
