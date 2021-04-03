@@ -1,3 +1,4 @@
+import { pickOne } from "../functions/util";
 import { Domino } from "./Domino";
 
 class Leads {
@@ -22,14 +23,15 @@ export class Player {
         this._name = value;
     }
     public play(leads: Leads): Domino {
-        const selection = this.dominoes.map((currentDomino) => {
+        const selection = this.dominoes.filter((currentDomino) => {
             return currentDomino.side1 === leads.lead1 ||
                 currentDomino.side2 === leads.lead1 ||
                 currentDomino.side1 === leads.lead2 ||
                 currentDomino.side2 === leads.lead2
         })
-       
+       return pickOne<Domino>(selection);
     }
+    
     public receiveDominoes([Domino]): void {
 
     }
