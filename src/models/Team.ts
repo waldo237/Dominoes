@@ -23,9 +23,7 @@ export class Team {
     public get wins(): number {
         return this._wins;
     }
-    public set wins(value: number) {
-        this._wins = value;
-    }
+
     public get points(): number {
         return this._points;
     }
@@ -45,5 +43,11 @@ export class Team {
     }
     public clearPoints():void{
         this._points = 0;
+    }
+       /**
+     * It adds one to the wins property.
+     */
+    public addWin():void {
+        this._wins += 1;
     }
 }

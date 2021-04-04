@@ -1,11 +1,14 @@
 import Board from "./Board";
 import { Dealer } from "./Dealer";
+import Domino from "./Domino";
+import Score from "./Score";
 
 class Game {
     private static instance: Game;
     private _rules: Rules[] = [];
     private board: Board = Board.getInstance(); //initialize instance
     private dealer: Dealer = Dealer.getInstance(); //initialize instance
+    private score: Score = Score.getInstance();//initialize instance
     // eslint-disable-next-line @typescript-eslint/no-empty-function
     private constructor() { }
     public static getInstance(): Game {
@@ -27,16 +30,16 @@ class Game {
 
     private monitorState() {
         if (this.board.isRoundOver()) {
-            Promise.resolve(()=>{
+            Promise.resolve(() => {
                 const timeOut = setTimeout(async () => {
                     Promise
-                        .resolve(this.board.distributePoints())
+                        .resolve(this.distributePoints())
                         .then(this.celebrate)
                         .catch((err) => console.log('an error happend', err));
                 }, 30000); //30 seconds to celebrate
                 clearTimeout(timeOut);
             })
-            .then(this.reStartRound)
+                .then(this.reStartRound)
         }
     }
 
@@ -44,19 +47,39 @@ class Game {
         this.monitorState();
     }
     public reStartRound(): void {
-    const dominoes = this.board.collectDominoes();
-    const players = this.board.getPlayersArray();
-       this.dealer.shuffle(dominoes);
-       players?.forEach((currentPlayer)=>{
-           currentPlayer.receiveDominoes(this.dealer.deal());
-       });
+        const dominoes = this.collectDominoes();
+        const players = this.board.getPlayersArray();
+        this.dealer.shuffle(dominoes);
+        players?.forEach(currentPlayer => currentPlayer.receiveDominoes(this.dealer.deal()));
+
     }
     public printRules(): void {
         this._rules.forEach((rule, i) => {
             console.log(`${i + 1}-${rule.ruleType}: ${rule.description}`);
         });
     }
+    public collectDominoes<T>(): Domino[] {
+        const players = this.board.getPlayersArray();
+        const dominoes = players?.map(player => player.returnDominoes())
+        if (dominoes) return ([] as Domino[]).concat(...dominoes);
+        return []
+    }
+    /**
+     * 🧪The resulting poings after a game is over, go to the winning team 🧪
+     */
+    public distributePoints(): void {
+        const winner = this.board.winningPlayer();
+        if (winner) {
+            const winningTeam = this.board.belongingTeam(winner);
+            const players = this.board.getPlayersArray();
+            const totalPoints = players && players
+                .map((player) => player.totalPointsInHand())
+                .reduce((sum, num) => sum + num);
+            if (winningTeam) winningTeam.points = totalPoints || 0;
+        }
+    }
 }
+
 enum rulesEnum {
     COMENZAR,
     GANAR,
@@ -85,3 +108,4 @@ class Rules {
         this._description = value;
     }
 }
+export { Game, Board }

@@ -42,7 +42,7 @@ function shuffler<T>(items: T[], itemsLeft: number): T[] {
  * @param b 
  * @returns 
  */
-export function swap<T>(array: T[], a: number, b: number):void {
+ function swap<T>(array: T[], a: number, b: number):void {
      [array[a], array[b]] = [array[b], array[a]];
 }
 

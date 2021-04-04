@@ -1,19 +1,16 @@
 import DominoesChain from "./DominoesChain";
 import { Team } from "./Team";
 import { Player } from "./Player";
-import Domino from "./Domino";
 
 
-
+/**
+ * The board monitors the interaction of the teams, players
+ * and the chain of dominoes.
+ */
 class Board {
     private static instance: Board;
-    private _topPoints = 200;
-    private _rounds = 0;
     private _team1: Team | null = null;
     private _team2: Team | null = null;
-    private _nextRoundStarter: Player | null = null;
-    private _nextPlayer: Player | null = null;
-    private _currentPlayer: Player | null = null;
     private _dominoesDisplay: DominoesChain | null = null;
 
     // eslint-disable-next-line @typescript-eslint/no-empty-function
@@ -31,39 +28,11 @@ class Board {
         this._dominoesDisplay = dominoesDisplay;
     }
 
-    public get currentPlayer(): Player | null {
-        return this._currentPlayer;
-    }
-    public set currentPlayer(value: Player | null) {
-        this._currentPlayer = value;
-    }
-    public get nextPlayer(): Player | null {
-        return this._nextPlayer;
-    }
-    public set nextPlayer(value: Player | null) {
-        this._nextPlayer = value;
-    }
-    public get nextRoundStarter(): Player | null {
-        return this._nextRoundStarter;
-    }
-    public set nextRoundStarter(value: Player | null) {
-        this._nextRoundStarter = value;
-    }
     public get team1(): Team | null {
         return this._team1;
     }
     public get team2(): Team | null {
         return this._team2;
-    }
-    public get rounds(): number {
-        return this._rounds;
-    }
-    public set rounds(value: number) {
-        this._rounds = value;
-    }
-
-    public get topPoints(): number {
-        return this._topPoints;
     }
     public getPlayersArray() {
         if (this.team1 && this.team2) {
@@ -76,26 +45,13 @@ class Board {
     private aPlayerHasWon() {
         this.getPlayersArray()?.some(player => !player.hasDominoes());
     }
-    private winningPlayer() {
-        return this.getPlayersArray()?.find(player => !player.hasDominoes());
+    public winningPlayer(): Player | null {
+        return this.getPlayersArray()?.find(player => !player.hasDominoes()) || null;
     }
-    private belongingTeam(player: Player): Team | null | undefined {
+    public belongingTeam(player: Player): Team | null | undefined {
         const theTeam = [this.team1, this.team2].find(team => team?.player1 === player
             || team?.player2 === player);
         return theTeam;
-    }
-
-    /**
-    * 🧪The game is ended when one of the teams.points gets to 200 🧪
-    * @param Player
-    * @param param1
-    */
-    public isGameOver(): boolean {
-        if (this.team1 && this.team2) {
-            return this.team1.points >= this.topPoints ||
-                this.team2.points >= this.topPoints;
-        }
-        return false;
     }
 
 
@@ -145,27 +101,6 @@ class Board {
         } else {
             console.log("a celebration was trigger but there is a problem with celebration message.")
         }
-    }
-
-    /**
-     * 🧪The resulting poings after a game is over, go to the winning team 🧪
-     */
-    public distributePoints():void {
-        const winner = this.winningPlayer()
-        if (winner) {
-            const winningTeam = this.belongingTeam(winner)
-            const players = this.getPlayersArray();
-            const totalPoints = players && players
-                .map((player) => player.totalPointsInHand())
-                .reduce((sum, num) => sum + num);
-            if (winningTeam) winningTeam.points = totalPoints || 0;
-        }
-    }
-    public collectDominoes<T>():Domino[]{
-        const players = this.getPlayersArray();
-        const dominoes = players?.map(player=>player.returnDominoes())
-        if(dominoes) return ([] as Domino[]).concat(...dominoes);
-        return []
     }
 }
 export default Board;

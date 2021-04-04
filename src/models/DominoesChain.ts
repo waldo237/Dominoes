@@ -2,9 +2,15 @@ import { Domino } from "./Domino";
 import { Leads } from "./Leads";
 import { printChainFormatter } from "../functions and utilities/screenFunctions";
 
+/**
+ * A data structure that represents the chain of 
+ * Dominoes on a table. Its store is an array, not a 
+ * DoublyLinkedList because it facilitates the interaction
+ * with the other objects that use arrays.
+ */
 class DominoesChain {
     public static instance: DominoesChain
-    private store: Array<Domino> = [];
+    private store:Domino[] = [];
 
     // eslint-disable-next-line @typescript-eslint/no-empty-function
     private constructor() { }
@@ -27,7 +33,7 @@ class DominoesChain {
 
             // try to fitting the first side of the Domino
             if (side1 === headLead) {
-                domino.prev = side1;
+                domino.next = side1;
                 return this.insertAtHead(domino);
             } else if (side1 === tailLead) {
                 domino.next = side2;
@@ -35,7 +41,7 @@ class DominoesChain {
             }
             // try the other side of the Domino
             if (side2 === headLead) {
-                domino.prev = side2;
+                domino.next = side2;
                 return this.insertAtHead(domino);
 
             } else if (side2 === tailLead) {
@@ -75,7 +81,7 @@ class DominoesChain {
     private getHead(): Domino {
         return this.store[0];
     }
-    private getSize() {
+    private getSize():number {
         return this.store.length;
     }
     private getTail(): Domino {

@@ -1,20 +1,18 @@
 type numRange = |0 | 1 | 2 | 3 | 4 | 5 | 6|number;
 
+/**
+ * A data structure that represents a domino, similar to a
+ * node in a SinglyList it can remember what next and what's behind
+ */
 export class Domino {
     private _side1: numRange;
     private _side2: numRange;
-    private _prev:number |null = null;
+
     private _next:number |null = null;
 
     constructor(side1: numRange, side2: numRange) {
         this._side1 = side1;
         this._side2 = side2;
-    }
-    public get prev():number |null {
-        return this._prev;
-    }
-    public set prev(value:number |null) {
-        this._prev = value;
     }
     public get next():number |null {
         return this._next;

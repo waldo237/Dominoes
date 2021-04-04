@@ -83,7 +83,7 @@ export class Player {
     public totalPointsInHand(): number {
         return this.dominoes
             .map((domino) => domino.side1 + domino.side2)
-            .reduce((prev, current) => prev + current);
+            .reduce((group, current) => group + current);
     }
 
 }
