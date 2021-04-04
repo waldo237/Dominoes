@@ -62,7 +62,7 @@ function populateDominoes(): Domino[] {
     const index = 6, indexX6 = 6;
     const dominoes: Domino[] = [];
     const memo: hashMap = {};
-    return populateDominoesHepper(dominoes, index - 1, indexX6, memo);
+    return populateDominoesHepper(dominoes, index, indexX6, memo);
 }
 
 /**
@@ -74,15 +74,17 @@ function populateDominoes(): Domino[] {
  * @returns 
  */
 function populateDominoesHepper(dominoes: Domino[], index: number, indexX6: number, memo: hashMap): Domino[] {
-    if (indexX6 === 0) return dominoes; //base case
-
+    if (indexX6 == 0) return dominoes; //base case
+    
     if (index === -1) { //re-start first counter
+        index = indexX6-1;
         indexX6 -= 1;
-        index = 6;
     }
     const pairHash = [index, indexX6].sort().join();
     if (!memo[pairHash]) { //momoize the values that are already in results.
+        
         memo[pairHash] = true;
+        console.log(pairHash)
         dominoes.push(new Domino(index, indexX6))
     }
     return populateDominoesHepper(dominoes, index - 1, indexX6, memo);
