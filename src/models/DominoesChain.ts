@@ -1,5 +1,5 @@
 import { Domino } from "./Domino";
-import { Leads } from "./schemas";
+import { Leads } from "./Leads";
 import { printChainFormatter } from "../functions and utilities/screenFunctions";
 
 class DominoesChain {

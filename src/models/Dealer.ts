@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 import { populateDominoes, shuffleWithRecursion } from "../functions and utilities/util";
 import Domino from "./Domino";
 import DominoesChain from "./DominoesChain";
@@ -11,12 +12,20 @@ import { Player } from "./Player";
  * Since it has direct access to the DominoesChain
  */
 export class Dealer {
-    private dominoes: Domino[];
-    private dominoesChain: DominoesChain;
+    private static instance: Dealer;
+    private dominoes: Domino[]= populateDominoes();
+    private dominoesChain: DominoesChain = DominoesChain.getInstance();
 
-    constructor() {
-        this.dominoes = populateDominoes();
-        this.dominoesChain = DominoesChain.getInstance();
+    private constructor(){}
+    public init():void {
+        this.dominoes 
+        this.dominoesChain 
+    }
+    public static getInstance(): Dealer {
+        if (!Dealer.instance) {
+            Dealer.instance = new Dealer();
+        }
+        return Dealer.instance;
     }
 
     /**
@@ -38,11 +47,12 @@ export class Dealer {
      * • Cuando un jugador tiene una sola opción de colocar ficha, después de 3 segundos,
      * el programa lo hace automáticamente.
      */
-    public monitorNextPlayer(nextPlayer: Player) {
+    public monitorNextPlayer(nextPlayer: Player):void {
         if (nextPlayer.canPlayHand(this.dominoesChain.showLeads())) {
             const timeOut = setTimeout(() => {
                 nextPlayer.play(this.dominoesChain.showLeads());
             }, 3000);
+            clearTimeout(timeOut);
         }
     }
 }

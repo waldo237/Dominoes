@@ -1,6 +1,6 @@
 import { pickOne } from "../functions and utilities/util";
 import { Domino } from "./Domino";
-import { Leads } from "./schemas";
+import { Leads } from "./Leads";
 
 
 export class Player {
@@ -53,18 +53,25 @@ export class Player {
      * @param leads 
      * @returns 
      */
-    public canPlayHand(leads: Leads|undefined): boolean {
-        return this.dominoes.some((currentDomino) => this.compareHandWithBoard(currentDomino, leads || new Leads(null, null)))
+    public canPlayHand(leads: Leads | undefined): boolean {
+        return this.dominoes
+            .some((currentDomino) => this.compareHandWithBoard(currentDomino, leads || new Leads(null, null)))
     }
 
     /**
      * Receives dominoes from the dealer after starting game and after shuffle.
-     * @param Dominos 
+     * @param dominos 
      */
-    public receiveDominoes(Dominos: Domino[]): void {
-        this.dominoes = Dominos;
+    public receiveDominoes(dominos: Domino[]): void {
+        this.dominoes.push(...dominos);
     }
-
+   /**
+     * returns all dominoes to the board so the dealer can reshuffle them.
+     * @param dominos 
+     */
+    public returnDominoes():Domino[] {
+       return this.dominoes.splice(0, this.dominoes.length-1);
+    }
     /**
      * Inform whether the player has dominoes left.
      * @returns boolean
@@ -73,4 +80,11 @@ export class Player {
         return this.dominoes.length > 0;
     }
 
+    public totalPointsInHand(): number {
+        return this.dominoes
+            .map((domino) => domino.side1 + domino.side2)
+            .reduce((prev, current) => prev + current);
+    }
+
 }
+

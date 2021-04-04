@@ -1,8 +1,11 @@
+import Board from "./Board";
+import { Dealer } from "./Dealer";
 
 class Game {
     private static instance: Game;
     private _rules: Rules[] = [];
-
+    private board: Board = Board.getInstance(); //initialize instance
+    private dealer: Dealer = Dealer.getInstance(); //initialize instance
     // eslint-disable-next-line @typescript-eslint/no-empty-function
     private constructor() { }
     public static getInstance(): Game {
@@ -17,13 +20,38 @@ class Game {
     public set rules(value: Rules[]) {
         this._rules = value;
     }
-    Run(): void {
-        /* TODO */
+    private celebrate() {
+        this.board.displayCelebration();
     }
-    Restart(): void {
-        /* TODO */
+
+
+    private monitorState() {
+        if (this.board.isRoundOver()) {
+            Promise.resolve(()=>{
+                const timeOut = setTimeout(async () => {
+                    Promise
+                        .resolve(this.board.distributePoints())
+                        .then(this.celebrate)
+                        .catch((err) => console.log('an error happend', err));
+                }, 30000); //30 seconds to celebrate
+                clearTimeout(timeOut);
+            })
+            .then(this.reStartRound)
+        }
     }
-    printRules(): void {
+
+    public run(): void {
+        this.monitorState();
+    }
+    public reStartRound(): void {
+    const dominoes = this.board.collectDominoes();
+    const players = this.board.getPlayersArray();
+       this.dealer.shuffle(dominoes);
+       players?.forEach((currentPlayer)=>{
+           currentPlayer.receiveDominoes(this.dealer.deal());
+       });
+    }
+    public printRules(): void {
         this._rules.forEach((rule, i) => {
             console.log(`${i + 1}-${rule.ruleType}: ${rule.description}`);
         });
@@ -36,7 +64,7 @@ enum rulesEnum {
     GENERAL
 }
 
- class Rules {
+class Rules {
 
     private _ruleType: rulesEnum = rulesEnum.GENERAL;
     private _description = "";
