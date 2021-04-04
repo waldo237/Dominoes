@@ -14,14 +14,6 @@ class Board {
     private _nextPlayer: Player | null = null;
     private _currentPlayer: Player | null = null;
     private _dominoesDisplay: DominoesChain | null = null;
-    //##################debugging only ########################################
-    public set dominoesDisplay(value: DominoesChain | null) {
-        this._dominoesDisplay = value;
-    }
-    public get dominoesDisplay(): DominoesChain | null {
-        return this._dominoesDisplay;
-    }
-    //##########################################################
 
     // eslint-disable-next-line @typescript-eslint/no-empty-function
     private constructor() { }
@@ -32,7 +24,7 @@ class Board {
         return Board.instance;
     }
 
-    init(team1: Team, team2: Team, dominoesDisplay: DominoesChain) {
+    private init(team1: Team, team2: Team, dominoesDisplay: DominoesChain): void {
         this._team1 = team1;
         this._team2 = team2;
         this._dominoesDisplay = dominoesDisplay;
@@ -92,14 +84,18 @@ class Board {
         return false;
     }
     /**
-      *  🧪 a win is triggered and properly recorded when a player runs out of dominoes 🧪
+      *  🧪 a win is triggered and properly recorded when a player runs out of dominoes or
+      * There is a deadlock🧪
       * The resulting poings after a game is ended go to the winning team
       * @param Player
       * @param param1
       */
     public didRoundEnd(): boolean {
-//TODO
+        if (this.isDeadLock() || ) {
+            
+        }
     }
+    
     /**
      * 🧪a deadlock is declared when there are no more matches🧪
      * @param DominoesChain
@@ -107,8 +103,10 @@ class Board {
      * @param param2
      */
     public isDeadLock(): boolean {
-        const deadLock = this.getPlayersArray()?.filter((p) => { this._dominoesDisplay?.showLeads() });
-        return deadLock?.length === 0;
+        const deadLock = this.getPlayersArray()?.filter((p) => {
+            return p.hasDominoes() && !p.canPlayHand(this._dominoesDisplay?.showLeads())
+        });
+        return deadLock?.length === 4;
     }
 
     /**
@@ -117,7 +115,7 @@ class Board {
      * formatter to output content to the screen.
      */
     public print(): void {
-        this.dominoesDisplay?.print();
+        this._dominoesDisplay?.print();
 
     }
 }

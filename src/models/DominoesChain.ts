@@ -4,7 +4,7 @@ import { printChainFormatter } from "../functions and utilities/screenFunctions"
 
 class DominoesChain {
     public static instance: DominoesChain
-    store: Array<Domino> = [];
+    private store: Array<Domino> = [];
 
     // eslint-disable-next-line @typescript-eslint/no-empty-function
     private constructor() { }

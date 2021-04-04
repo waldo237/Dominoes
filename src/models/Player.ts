@@ -53,8 +53,8 @@ export class Player {
      * @param leads 
      * @returns 
      */
-    public canPlayHand(leads: Leads): boolean {
-        return this.dominoes.some((currentDomino) => this.compareHandWithBoard(currentDomino, leads))
+    public canPlayHand(leads: Leads|undefined): boolean {
+        return this.dominoes.some((currentDomino) => this.compareHandWithBoard(currentDomino, leads || new Leads(null, null)))
     }
 
     /**

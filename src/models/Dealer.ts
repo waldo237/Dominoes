@@ -12,7 +12,7 @@ import { Player } from "./Player";
  */
 export class Dealer {
     private dominoes: Domino[];
-    dominoesChain: DominoesChain;
+    private dominoesChain: DominoesChain;
 
     constructor() {
         this.dominoes = populateDominoes();
