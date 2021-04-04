@@ -3,20 +3,30 @@ import { Leads } from "./schemas";
 import { printChainFormatter } from "../functions and utilities/screenFunctions";
 
 class DominoesChain {
+    public static instance: DominoesChain
     store: Array<Domino> = [];
- 
+
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    private constructor() { }
+    public static getInstance(): DominoesChain {
+        if (!DominoesChain.instance) {
+            DominoesChain.instance = new DominoesChain();
+        }
+        return DominoesChain.instance;
+    }
+
     public addDomino(domino: Domino): void {
         const { side1, side2 } = domino;
-        
+
         if (this.isEmpty()) {
             domino.next = side1;
             this.insertAtHead(domino);
-        }else{
+        } else {
             const headLead = this.getHead().next;
             const tailLead = this.getTail().next;
 
             // try to fitting the first side of the Domino
-            if (side1 === headLead) { 
+            if (side1 === headLead) {
                 domino.prev = side1;
                 return this.insertAtHead(domino);
             } else if (side1 === tailLead) {
@@ -32,19 +42,19 @@ class DominoesChain {
                 domino.next = side1;
                 return this.insertAtTail(domino);
             }
-            
+
         }
     }
 
     private insertAtHead(domino: Domino): void {
-        
+
         this.store = [domino, ...this.store];
     }
     private insertAtTail(domino: Domino): void {
         this.store.push(domino);
     }
     public showLeads(): Leads {
-        // if there is only one domino, both of its sides will be the two leads.
+        // if there is only one domino and is double, both of its sides will be the two leads.
         if (this.getSize() === 1) {
             const lead1 = this.getHead().side1;
             const lead2 = this.getTail().side2;
@@ -62,15 +72,20 @@ class DominoesChain {
     public isEmpty(): boolean {
         return this.store.length === 0;
     }
-    private getHead(): Domino{
+    private getHead(): Domino {
         return this.store[0];
     }
-    private getSize(){
+    private getSize() {
         return this.store.length;
     }
-    private getTail(): Domino{
+    private getTail(): Domino {
         return this.store[this.store.length - 1];
     }
+    /**
+     * - test10: 🧪 The next matching domino is added to 
+     * the correct end of the chain with the frontInTheChain property properly pointed outwards 🧪: 
+     * - test 11: 🧪 On the console, the doubles go horizontally 🧪 : 
+     */
     public print(): void {
         this.store.forEach((currentDomino) => {
             printChainFormatter(currentDomino);

@@ -55,7 +55,7 @@ Translate the requirement by writing a unit test. If you have hot reloading set 
     - test 12: 🧪 a win is triggered and properly recorded when a player runs out of dominoes 🧪 : • Cuando uno de los 4 jugadores coloca todas sus fichas: la mano es ganada por la pareja a la que pertenece dicho jugador.
     - test 13: 🧪a deadlock is declared when there are no more matches🧪: • Tranque: cuando ninguno de los 4 jugadores puede seguir colocando ninguna de sus fichas
     - test 14: 🧪 currentPlayer vs. nextPlayer, player with les points wins 🧪: • se comparan las sumas de el jugador actual y el proximo.
-    - test 15: 🧪The resulting poings from a deadlock go to the winning team 🧪: • se suman los puntos de las fichas que no han sido jugadas de cada pareja.
+    - test 15: 🧪The resulting poings after a game is ended go to the winning team 🧪: • se suman los puntos de las fichas que no han sido jugadas de cada pareja.
     - test 16: 🧪The round is restarted if the points of both players are even 🧪: • En caso de empate, la mano no cuenta a efectos de puntuación.
     - test 17: 🧪After a player wins the sum of all the available dominoes go to the winning team 🧪: • Al terminar la partida, la pareja ganadora obtiene la suma de todos los puntos de las fichas que no han sido colocadas por los cuatro jugadores.
 
