@@ -3,10 +3,15 @@
 
 
 import Domino from "../models/Domino";
+import DominoesChain from "../models/DominoesChain";
 
 
 
-function printfrontUp(front: number, back: number): void {
+function printUpwards(front: number, back: number): void {
+    console.log(`      ⌜${front}⌝\n` + `      ⎸—⎹      \n` + `      ⌞${back}⌟`);
+}
+
+function printDownwards(back: number, front: number): void {
     console.log(`      ⌜${front}⌝\n` + `      ⎸—⎹      \n` + `      ⌞${back}⌟`);
 }
 
@@ -23,18 +28,31 @@ function printGameHeadings(heading: string) {
 function printScores() {
 
 }
-
-function printChainFormatter(domino: Domino) {
-    const { side1, side2, next, prev } = domino;
-    if (domino.isDouble()) {
-         printDoubles(side1, side2);
-    }else if (next) {
-        printfrontUp(side1, side2);
-    }else if(prev){
-        printfrontUp(side2, side1);
+function printDomino(currDom:Domino){
+    const { side1, side2, direction, isDouble } = currDom;
+    if (isDouble()) {
+        printDoubles(side1, side2);
     }
+    if (direction) {
+        printUpwards(side1, side2);
+    } else {
+        printDownwards(side2, side1);
+    }
+}
+
+function printChainOfDominoes(dominoes: Domino[]):void{
+   const { length} = dominoes;
+    printChainRecursively(dominoes, length );
+}
+
+function printChainRecursively(dominoes: Domino[], length: number): Domino[] {
+    if (length === 0) return dominoes; //base case
+
+    const currDom = dominoes.pop();
+    if (currDom) printDomino(currDom);
+   return printChainRecursively(dominoes, length-1 );
 }
 
 
 
-export { printChainFormatter }
+export { printChainOfDominoes }
