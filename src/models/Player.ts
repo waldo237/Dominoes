@@ -3,6 +3,7 @@ import { Domino } from "./Domino";
 import { Leads } from "./Leads";
 
 
+
 export class Player {
     private dominoes: Domino[] = [];
     private _name: string;
@@ -65,12 +66,12 @@ export class Player {
     public receiveDominoes(dominos: Domino[]): void {
         this.dominoes.push(...dominos);
     }
-   /**
-     * returns all dominoes to the board so the dealer can reshuffle them.
-     * @param dominos 
-     */
-    public returnDominoes():Domino[] {
-       return this.dominoes.splice(0, this.dominoes.length-1);
+    /**
+      * returns all dominoes to the board so the dealer can reshuffle them.
+      * @param dominos 
+      */
+    public returnDominoes(): Domino[] {
+        return this.dominoes.splice(0, this.dominoes.length - 1);
     }
     /**
      * Inform whether the player has dominoes left.
@@ -79,7 +80,17 @@ export class Player {
     public hasDominoes(): boolean {
         return this.dominoes.length > 0;
     }
-
+    public hasDoubleSixInRound1(round: number): boolean {
+        let res = false;
+        if (round==0) {
+            this.dominoes.forEach(domino => {
+                if (domino.side1 === 6 && domino.side1 === 6) {
+                    res = true;
+                }
+            });
+        }
+        return res;
+    }
     public totalPointsInHand(): number {
         return this.dominoes
             .map((domino) => domino.side1 + domino.side2)

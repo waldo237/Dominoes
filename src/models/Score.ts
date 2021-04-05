@@ -1,16 +1,11 @@
-import DominoesChain from "./DominoesChain";
-import { Team } from "./Team";
+
 import { Player } from "./Player";
-import Domino from "./Domino";
-
-
+import Board from "./Board";
 
 class Score {
     private static instance: Score;
     private _topPoints = 200;
     private _rounds = 0;
-    private _nextRoundStarter: Player | null = null;
-    private _nextPlayer: Player | null = null;
     private _currentPlayer: Player | null = null;
 
 
@@ -26,20 +21,8 @@ class Score {
     public get currentPlayer(): Player | null {
         return this._currentPlayer;
     }
-    public set currentPlayer(value: Player | null) {
+    public writeCurrentPlayer(value: Player | null):void {
         this._currentPlayer = value;
-    }
-    public get nextPlayer(): Player | null {
-        return this._nextPlayer;
-    }
-    public set nextPlayer(value: Player | null) {
-        this._nextPlayer = value;
-    }
-    public get nextRoundStarter(): Player | null {
-        return this._nextRoundStarter;
-    }
-    public set nextRoundStarter(value: Player | null) {
-        this._nextRoundStarter = value;
     }
 
     public get rounds(): number {
@@ -54,11 +37,12 @@ class Score {
     }
     
     /**
-    * 🧪The game is ended when one of the teams.points gets to 200 🧪
+    * The game is ended when one of the teams gets to total points
     * @param Player
     * @param param1
     */
-     public isGameOver(team1:Team,team2:Team ): boolean {
+     public isGameOver(): boolean {
+         const {team1, team2} = Board.getInstance();
         if (team1 && team2) {
             return team1.points >= this.topPoints ||
                 team2.points >= this.topPoints;

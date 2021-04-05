@@ -13,14 +13,11 @@ import { Player } from "./Player";
  */
 export class Dealer {
     private static instance: Dealer;
-    private dominoes: Domino[]= populateDominoes();
+    private dominoes: Domino[] = populateDominoes();
     private dominoesChain: DominoesChain = DominoesChain.getInstance();
 
-    private constructor(){}
-    public init():void {
-        this.dominoes 
-        this.dominoesChain 
-    }
+    private constructor() { }
+
     public static getInstance(): Dealer {
         if (!Dealer.instance) {
             Dealer.instance = new Dealer();
@@ -32,27 +29,37 @@ export class Dealer {
      * This method is used to receive the dominoes to be shuffled.
      * @param Domino
      */
-    public shuffle(dominoes: Domino[]): void {
+    public shuffle(dominoes: Domino[]): Dealer {
         this.dominoes = shuffleWithRecursion(dominoes);
+        return this;
     }
 
     /**
      * gives 7 dominoes to each player and stays with none.
      */
-    public deal(): Domino[] {
-        return this.dominoes.splice(this.dominoes.length - 8, 7);
+    public deal(players: Player[]): Dealer {
+        players.forEach((player) => {
+            const sevenDominoes = this.dominoes.splice(this.dominoes.length - 8, 7);
+            player.receiveDominoes(sevenDominoes);
+        })
+        return this;
     }
     /**
      * 🧪The dealer forced the next move 🧪:
      * • Cuando un jugador tiene una sola opción de colocar ficha, después de 3 segundos,
      * el programa lo hace automáticamente.
+     * @param CurrentPlayer It can be null because it doesn't exist at the beginning of the game.
      */
-    public monitorNextPlayer(nextPlayer: Player):void {
-        if (nextPlayer.canPlayHand(this.dominoesChain.showLeads())) {
-            const timeOut = setTimeout(() => {
-                nextPlayer.play(this.dominoesChain.showLeads());
-            }, 3000);
-            clearTimeout(timeOut);
+    public monitorAndForceNextMove(CurrentPlayer: Player | null): void {
+        const leads = this.dominoesChain.showLeads();
+        if (CurrentPlayer && leads ) {
+            if (CurrentPlayer.canPlayHand(leads)){
+                const timeOut = setTimeout(() => {
+                    CurrentPlayer.play(leads);
+                }, 3000);
+                clearTimeout(timeOut);
+            }
+
         }
     }
 }

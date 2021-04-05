@@ -1,3 +1,4 @@
+import { welcome } from "../functions and utilities/consoleInteractionFunctions";
 import Board from "./Board";
 import { Dealer } from "./Dealer";
 import Domino from "./Domino";
@@ -5,7 +6,6 @@ import Score from "./Score";
 
 class Game {
     private static instance: Game;
-    private _rules: Rules[] = [];
     private board: Board = Board.getInstance(); //initialize instance
     private dealer: Dealer = Dealer.getInstance(); //initialize instance
     private score: Score = Score.getInstance();//initialize instance
@@ -17,16 +17,29 @@ class Game {
         }
         return Game.instance;
     }
-    public get rules(): Rules[] {
-        return this._rules;
+
+    /**
+     * The game initializer
+     * prompts the user to enter the names of the players
+     * initializes the board with both teams.
+     * Sets the scores on the board 🧨🧨🎇🎇🎇🧨
+     * initializes the dealer
+     */
+    public async run(): Promise<void> {
+        const { team1, team2 } = await welcome();
+       
+        this.board.init(team1, team2);
+        const players = this.board.getPlayersArray();
+        this.dealer.deal(players);
+        this.dealer.monitorAndForceNextMove(this.board.getCurrentPlayer());
+        console.log(JSON.stringify(this.board.team1?.player1));
+        this.monitorState();
     }
-    public set rules(value: Rules[]) {
-        this._rules = value;
-    }
+
+
     private celebrate() {
         this.board.displayCelebration();
     }
-
 
     private monitorState() {
         if (this.board.isRoundOver()) {
@@ -43,21 +56,15 @@ class Game {
         }
     }
 
-    public run(): void {
-        this.monitorState();
-    }
-    public reStartRound(): void {
-        const dominoes = this.collectDominoes();
-        const players = this.board.getPlayersArray();
-        this.dealer.shuffle(dominoes);
-        players?.forEach(currentPlayer => currentPlayer.receiveDominoes(this.dealer.deal()));
 
+    public reStartRound(): void {
+        const players = this.board.getPlayersArray();
+        const dominoes = this.collectDominoes();
+        this.dealer.shuffle(dominoes)
+            .deal(players);
     }
-    public printRules(): void {
-        this._rules.forEach((rule, i) => {
-            console.log(`${i + 1}-${rule.ruleType}: ${rule.description}`);
-        });
-    }
+
+
     public collectDominoes<T>(): Domino[] {
         const players = this.board.getPlayersArray();
         const dominoes = players?.map(player => player.returnDominoes())
@@ -80,32 +87,4 @@ class Game {
     }
 }
 
-enum rulesEnum {
-    COMENZAR,
-    GANAR,
-    TIEMPO_DE_JUEGO,
-    GENERAL
-}
-
-class Rules {
-
-    private _ruleType: rulesEnum = rulesEnum.GENERAL;
-    private _description = "";
-    constructor(ruleType: rulesEnum, description: string) {
-        this._ruleType = ruleType;
-        this.description = description;
-    }
-    public get ruleType(): rulesEnum {
-        return this._ruleType;
-    }
-    public set ruleType(value: rulesEnum) {
-        this._ruleType = value;
-    }
-    public get description(): string {
-        return this._description;
-    }
-    public set description(value: string) {
-        this._description = value;
-    }
-}
-export { Game, Board }
+export default Game;

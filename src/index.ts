@@ -1,25 +1,21 @@
 
-import Board from "./models/Board";
+import Game from "./models/Game";
 
-import DominoesChain from "./models/DominoesChain";
+async function main() {
 
-import { populateDominoes, shuffleWithRecursion } from "./functions and utilities/util";
+  // const board = Board.getInstance();
 
-function main() {
-  const board = Board.getInstance();
+  // const chain =  DominoesChain.getInstance();
+  // const pupulated = shuffleWithRecursion(populateDominoes());
 
-  const chain =  DominoesChain.getInstance();
-  const pupulated = shuffleWithRecursion(populateDominoes());
-  console.log(pupulated.length);
-  pupulated.forEach((domino)=>{
-    chain.addDomino(domino);
+  // pupulated.forEach((domino)=>{
+  //   chain.addDomino(domino);
 
-  })
-  board.dominoesDisplay = chain;
-  process.stdout.cursorTo(0); 
+  // })
 
-  board.print();
-  process.stdout.cursorTo(0); 
+  const game = Game.getInstance();
+
+  await game.run();
 
 }
 

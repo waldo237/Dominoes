@@ -49,7 +49,7 @@ function shuffler<T>(items: T[], itemsLeft: number): T[] {
 /**
  * allows to use objects as maps in Typescript
  */
-type hashMap = {
+ type hashMap = {
     [key: string]: boolean
 }
 
@@ -84,7 +84,6 @@ function populateDominoesHepper(dominoes: Domino[], index: number, indexX6: numb
     if (!memo[pairHash]) { //momoize the values that are already in results.
         
         memo[pairHash] = true;
-        console.log(pairHash)
         dominoes.push(new Domino(index, indexX6))
     }
     return populateDominoesHepper(dominoes, index - 1, indexX6, memo);

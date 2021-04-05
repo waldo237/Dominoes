@@ -1,6 +1,9 @@
 import DominoesChain from "./DominoesChain";
 import { Team } from "./Team";
 import { Player } from "./Player";
+import { printChainOfDominoes, teamNames } from "../functions and utilities/consoleInteractionFunctions";
+import Score from "./Score";
+
 
 
 /**
@@ -11,7 +14,7 @@ class Board {
     private static instance: Board;
     private _team1: Team | null = null;
     private _team2: Team | null = null;
-    private _dominoesDisplay: DominoesChain | null = null;
+    private _dominoesDisplay = DominoesChain.getInstance();
 
     // eslint-disable-next-line @typescript-eslint/no-empty-function
     private constructor() { }
@@ -22,10 +25,16 @@ class Board {
         return Board.instance;
     }
 
-    private init(team1: Team, team2: Team, dominoesDisplay: DominoesChain): void {
-        this._team1 = team1;
-        this._team2 = team2;
-        this._dominoesDisplay = dominoesDisplay;
+    public init(tNames1: teamNames, tNames2: teamNames): Board {
+        const p1 = new Player(tNames1.player1)
+        const p2 = new Player(tNames1.player2)
+        const p3 = new Player(tNames2.player1)
+        const p4 = new Player(tNames2.player2)
+        const t1 = new Team('team1', p1, p2);
+        const t2 = new Team('team1', p3, p4);
+        this._team1 = t1;
+        this._team2 = t2;
+        return this;
     }
 
     public get team1(): Team | null {
@@ -34,14 +43,20 @@ class Board {
     public get team2(): Team | null {
         return this._team2;
     }
-    public getPlayersArray() {
+    /**
+     * Gets the players off their team and returns an array in an
+     * order that simulates the turns in a domino game.
+     * @returns 
+     */
+    public getPlayersArray(): Player[] {
+        let res: Player[] = [];
         if (this.team1 && this.team2) {
             const { player1: t1p1, player2: t1p2 } = this.team1;
             const { player1: t2p1, player2: t2p2 } = this.team2;
-            return [t1p1, t1p2, t2p1, t2p2]
+            res = [t1p1, t2p1, t1p2, t2p2]//preserves the order
         }
+        return res;
     }
-
     private aPlayerHasWon() {
         this.getPlayersArray()?.some(player => !player.hasDominoes());
     }
@@ -76,21 +91,24 @@ class Board {
      * @param param2
      */
     public isDeadLock(): boolean {
-        const deadLock = this.getPlayersArray()?.filter((p) => {
-            return p.hasDominoes() && !p.canPlayHand(this._dominoesDisplay?.showLeads())
+        const deadLock = this.getPlayersArray().filter((p) => {
+            const leads = this._dominoesDisplay.showLeads();
+           if(leads) return p.hasDominoes() && !p.canPlayHand(leads)
         });
         return deadLock?.length === 4;
     }
 
+
     /**
-     * triggers the output to the console using 
-     * the internal dominoes display and its print
-     * formatter to output content to the screen.
+     * - test10: 🧪 The next matching domino is added to 
+     * the correct end of the chain with the frontInTheChain property properly pointed outwards 🧪: 
+     * - test 11: 🧪 On the console, the doubles go horizontally 🧪 : 
      */
     public print(): void {
-        this._dominoesDisplay?.print();
+        printChainOfDominoes(this._dominoesDisplay.store);
 
     }
+
     public displayCelebration(): void {
         const winner = this.winningPlayer()
         if (winner) {
@@ -102,5 +120,32 @@ class Board {
             console.log("a celebration was trigger but there is a problem with celebration message.")
         }
     }
+
+    /**
+    * The very first game starts (rounds==0) a player with [6|6] starts.
+    * After round starter, player1 from the opposite team continues playing
+     */
+    public getCurrentPlayer(): Player | null {
+        const { rounds, writeCurrentPlayer, currentPlayer } = Score.getInstance();
+        const players = this.getPlayersArray();
+        let pWith6n6: Player | null | undefined;
+
+        if (rounds === 0) {
+            pWith6n6 = players.find((player) => player.hasDoubleSixInRound1(rounds));
+            Score.getInstance().writeCurrentPlayer(pWith6n6 || null);
+        } else {
+            const index = (currentPlayer) ? players.indexOf(currentPlayer) : -1;
+            if(index !== -1){
+                if(index === 3){
+                    players[0];
+                }else{
+                    players[index + 1];
+                }
+            } 
+            Score.getInstance().writeCurrentPlayer(pWith6n6 || null);
+        }
+        return pWith6n6 || null;
+    }
+
 }
 export default Board;
