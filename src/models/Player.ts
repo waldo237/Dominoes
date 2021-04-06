@@ -26,20 +26,22 @@ export class Player {
      * @param leads 
      * @returns 
      */
-    private compareHandWithBoard(currentDomino: Domino, leads: Leads) {
-        return currentDomino.side1 === leads.lead1 ||
-            currentDomino.side2 === leads.lead1 ||
-            currentDomino.side1 === leads.lead2 ||
-            currentDomino.side2 === leads.lead2;
+    private compareHandWithBoard(currentDomino: Domino, leads: Leads | null) {
+        if (leads) {
+            return currentDomino.side1 === leads.lead1 ||
+                currentDomino.side2 === leads.lead1 ||
+                currentDomino.side1 === leads.lead2 ||
+                currentDomino.side2 === leads.lead2;
+        }
     }
 
     /**
-     * @param leads 🧪 The next move is randomized  when there is more than one option.🧪: 
+     * @param leads  The next move is randomized  when there is more than one option.: 
      * • Cuando un jugador tiene más de una opción para jugar: 
      * utiliza un algoritmo random para decidir la jugada.
      * @returns 
      */
-    public play(leads: Leads): Domino {
+    public play(leads: Leads | null): Domino {
         const selection = this.dominoes.filter((currentDomino) => {
             return this.compareHandWithBoard(currentDomino, leads);
         });
@@ -64,7 +66,7 @@ export class Player {
      * @param dominos 
      */
     public receiveDominoes(dominos: Domino[]): void {
-        this.dominoes.push(...dominos);
+        this.dominoes = dominos;
     }
     /**
       * returns all dominoes to the board so the dealer can reshuffle them.
@@ -80,13 +82,17 @@ export class Player {
     public hasDominoes(): boolean {
         return this.dominoes.length > 0;
     }
+    public DominoesNum(): number {
+        return this.dominoes.length;
+    }
     public hasDoubleSixInRound1(round: number): boolean {
         let res = false;
-        if (round==0) {
-            this.dominoes.forEach(domino => {
-                if (domino.side1 === 6 && domino.side1 === 6) {
+        if (round == 0) {
+            this.dominoes.forEach((domino, i) => {
+                if (domino.side1 === 6 && domino.side2 === 6) {
                     res = true;
                 }
+                console.log(`${domino.side1}/${domino.side2}`);
             });
         }
         return res;

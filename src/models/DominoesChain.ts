@@ -133,7 +133,8 @@ class DominoesChain {
     }
 
     /**
-     * shows the outside whats on the two ends of the _store
+     * shows the outside whats on the two ends of the _store.
+     * It may be null so it must be handled properly.
      */
     public showLeads(): Leads |null {
         // if there is only one domino and is double, both of its sides will be the two leads.
