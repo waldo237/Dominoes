@@ -21,28 +21,37 @@ class Score {
     public get currentPlayer(): Player | null {
         return this._currentPlayer;
     }
-    public writeCurrentPlayer(value: Player | null):void {
-        this._currentPlayer = value;
-    }
-
     public get rounds(): number {
         return this._rounds;
-    }
-    public set rounds(value: number) {
-        this._rounds = value;
     }
 
     public get topPoints(): number {
         return this._topPoints;
     }
-    
+    /**
+    * keeps record of who the next player is. 
+    * The information comes from the board.
+    * @param value 
+    */
+    public writeRounds(value: number) {
+        this._rounds = value;
+    }
+    /**
+     * keeps record of who the next player is. 
+     * The information comes from the board.
+    * @param value 
+    */
+    public writeCurrentPlayer(value: Player | null): void {
+        this._currentPlayer = value;
+    }
+
     /**
     * The game is ended when one of the teams gets to total points
     * @param Player
     * @param param1
     */
-     public isGameOver(): boolean {
-         const {team1, team2} = Board.getInstance();
+    public isGameOver(): boolean {
+        const { team1, team2 } = Board.getInstance();
         if (team1 && team2) {
             return team1.points >= this.topPoints ||
                 team2.points >= this.topPoints;
