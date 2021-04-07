@@ -5,7 +5,7 @@ import { Leads } from "./Leads";
 
 
 export class Player {
-    private dominoes: Domino[] = [];
+    private _dominoes: Domino[] = [];
     private _name: string;
 
     constructor(name: string) {
@@ -17,6 +17,9 @@ export class Player {
     }
     public set name(value: string) {
         this._name = value;
+    }
+    public get dominoes(): Domino[] {
+        return this._dominoes;
     }
 
     /**
@@ -36,19 +39,59 @@ export class Player {
     }
 
     /**
-     * @param leads  The next move is randomized  when there is more than one option.: 
-     * • Cuando un jugador tiene más de una opción para jugar: 
-     * utiliza un algoritmo random para decidir la jugada.
+     * simulates a move passing the returned domino to the dominoes chain.
+     * @param leads  
+     * The next move is randomized  when there is more than one option.: 
      * @returns 
      */
-    public play(leads: Leads | null): Domino {
+    public play(leads: Leads | null, input: Domino | null): Domino | null {
+        //🧨🧨up til here you are working with input that is a copy and it hasn't  been taken away from the array.🧨🧨
+        console.log(`${this.name} selected Domino`, input)
+        console.log(`${this.name} selected leads`, leads)
+        let res: Domino | null = null;
         const selection = this.dominoes.filter((currentDomino) => {
             return this.compareHandWithBoard(currentDomino, leads);
         });
-        if (selection.length > 1) {
-            return pickOne<Domino>(selection);
+
+        if (leads === null) { //if the dominoes chain is empty. 
+            if (input?.side1 === 6 && input?.side2 === 6) {
+                res = this.snatchOne(input);
+            } else if (selection.length > 1) { //if you have more than one option
+                res = pickOne(selection);//pick randomly.
+            } else if (input) { 
+                res = this.snatchOne(input);
+            }
         }
-        return selection[0];
+        if (selection.length > 1) { //if you have more than one option
+            res = pickOne(selection);//pick randomly.
+        } else if (selection.length === 1) {//if there is only one option
+            if (input) {//coming from the user.
+                res = this.snatchOne(input);
+            } else {//dealer played
+                console.log('El arbitro decidio porque el jugador tomo demasiado tiempo.')
+                res = res = this.snatchOne(selection[0]);
+            }
+        }
+        console.log('this is the response', res);
+        return res;
+    }
+    private snatchOne(input: Domino) {
+        const index = this.dominoes.findIndex((dom) => dom === input);
+        return  this.dominoes.splice(index, 1)[0];
+    }
+
+    /**
+     * it is called in the first round to force the double six move when the game is started.
+     * @param round 
+     * @returns 
+     */
+    public playDoubleSix(round: number): Domino | null {
+        let res: Domino | null = null;
+        if (round == 0) {
+            const i = this.dominoes.findIndex((domino) => domino.side1 === 6 && domino.side2 === 6);
+            res = this.dominoes.splice(i, 1)[0];
+        }
+        return res;
     }
 
     /**
@@ -66,7 +109,7 @@ export class Player {
      * @param dominos 
      */
     public receiveDominoes(dominos: Domino[]): void {
-        this.dominoes = dominos;
+        this._dominoes = dominos;
     }
     /**
       * returns all dominoes to the board so the dealer can reshuffle them.
@@ -75,6 +118,7 @@ export class Player {
     public returnDominoes(): Domino[] {
         return this.dominoes.splice(0, this.dominoes.length - 1);
     }
+
     /**
      * Inform whether the player has dominoes left.
      * @returns boolean
@@ -82,21 +126,27 @@ export class Player {
     public hasDominoes(): boolean {
         return this.dominoes.length > 0;
     }
+
+    /**
+     * Says how many dominoes the player has.
+     * @returns 
+     */
     public DominoesNum(): number {
         return this.dominoes.length;
     }
+
     public hasDoubleSixInRound1(round: number): boolean {
         let res = false;
         if (round == 0) {
-            this.dominoes.forEach((domino, i) => {
+            this.dominoes.forEach((domino) => {
                 if (domino.side1 === 6 && domino.side2 === 6) {
                     res = true;
                 }
-                console.log(`${domino.side1}/${domino.side2}`);
             });
         }
         return res;
     }
+
     public totalPointsInHand(): number {
         return this.dominoes
             .map((domino) => domino.side1 + domino.side2)

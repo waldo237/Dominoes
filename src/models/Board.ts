@@ -1,7 +1,8 @@
 import DominoesChain from "./DominoesChain";
 import { Team } from "./Team";
 import { Player } from "./Player";
-import { printChainOfDominoes, teamNames } from "../functions and utilities/consoleInteractionFunctions";
+import { teamNames } from "../functions and utilities/userInputFunctions";
+import { printChainOfDominoes } from "../functions and utilities/consolePrintFunctions";
 import Score from "./Score";
 
 
@@ -47,16 +48,9 @@ class Board {
     public get team2(): Team | null {
         return this._team2;
     }
-    /**
-     * Gets the players off their team and returns an array in an
-     * order that simulates the turns in a domino game.
-     * @returns 
-     */
-    public getPlayersArray(): Player[] {
-        return this.playersArray
-    }
-    private aPlayerHasWon() {
-        this.playersArray?.some(player => !player.hasDominoes());
+
+    public aPlayerHasWon(): boolean {
+        return this.playersArray?.some(player => !player.hasDominoes());
     }
     public winningPlayer(): Player | null {
         return this.playersArray?.find(player => !player.hasDominoes()) || null;
@@ -65,21 +59,6 @@ class Board {
         const theTeam = [this.team1, this.team2].find(team => team?.player1 === player
             || team?.player2 === player);
         return theTeam;
-    }
-
-
-    /**
-      *  a win is triggered and properly recorded when a player runs out of dominoes or
-      * There is a deadlock or one player got more than 3 consecutive doubles
-      * The resulting poings after a game is ended go to the winning team
-      * @param Player
-      * @param param1
-      */
-    public isRoundOver(): boolean {
-        if (this.isDeadLock() || this.aPlayerHasWon()) {
-            return true;
-        }
-        return false;
     }
 
     /**
@@ -99,30 +78,33 @@ class Board {
 
     /**
     * The very first game starts (rounds==0) a player with [6|6] starts.
-    * After round starter, player1 from the opposite team continues playing
+    * After round starter, player1 from the opposite team continues playing.
      */
-    public getCurrentPlayer(): Player | null {
+    public nextPlayer(): Player | null {
         const { rounds, currentPlayer } = Score.getInstance();
         const players = this.playersArray;
-        let pWith6n6: Player | null | undefined;
+        let meetsConditions: Player | null | undefined;
 
-        if (rounds === 0) {
-            pWith6n6 = players.find((player) => player.hasDoubleSixInRound1(rounds));
-
-            Score.getInstance().writeCurrentPlayer(pWith6n6 || null);
+        if (rounds === 0 && !currentPlayer) { //first round and the first player
+            meetsConditions = players.find((player) => player.hasDoubleSixInRound1(rounds)); //the player with 6/6
         } else {
-            const index = (currentPlayer) ? players.indexOf(currentPlayer) : -1;
-            if (index !== -1) {
-                if (index === 3) {
-                    players[0];
-                } else {
-                    players[index + 1];
-                }
-            }
-            Score.getInstance().writeCurrentPlayer(pWith6n6 || null);
+            console.log('current player from next',currentPlayer )
+            if(currentPlayer) meetsConditions = this.findNextPInLine(currentPlayer);
         }
-        return pWith6n6 || null;
+        return meetsConditions || null;
     }
 
+    public findNextPInLine(currentPlayer: Player): Player | null {
+        let res: Player | null = null;
+        const index = (currentPlayer) ? this.playersArray.indexOf(currentPlayer) : -1;
+        if (index !== -1) { //indexOf returns -1
+            if (index === 3) {
+                res = this.playersArray[0];
+            } else {
+                res = this.playersArray[index + 1];
+            }
+        }
+        return res;
+    }
 }
 export default Board;

@@ -1,6 +1,5 @@
 import Board from "./Board";
 import { Dealer } from "./Dealer";
-import DominoesChain from "./DominoesChain";
 import { Player } from "./Player";
 
 const teamSchema1 = {
@@ -15,7 +14,6 @@ const teamSchema1 = {
 Board.getInstance().init(teamSchema1, teamSchema2);
 
 const players = Board.getInstance().playersArray;
-Dealer.getInstance().monitorAndForceNextMove(Board.getInstance().getCurrentPlayer());
 
 
 describe("The dominoes were distributed correctly ", () => {
@@ -31,9 +29,6 @@ describe("The dominoes were distributed correctly ", () => {
 
 describe("The Game is initialized correctly", () => {
     test("- test5.1: 🧪The very first game was started by the player with [6|6]🧪:", async () => {
-        const dominoTrownAtTheChain = Board.getInstance().getCurrentPlayer()
-          console.log(dominoTrownAtTheChain)
-
-        expect(dominoTrownAtTheChain).toBeInstanceOf(Player);
+        expect(Board.getInstance().nextPlayer).toBeInstanceOf(Player);
     });
 });

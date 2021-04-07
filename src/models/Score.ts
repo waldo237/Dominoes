@@ -1,14 +1,17 @@
 
 import { Player } from "./Player";
-import Board from "./Board";
 
 class Score {
     private static instance: Score;
     private _topPoints = 200;
     private _rounds = 0;
     private _currentPlayer: Player | null = null;
-
-
+    private _lastRoundWinner: Player | null = null;
+    private _lastGameWinner: Player | null = null;
+    private _roundIsOver = false;
+    private _gameIsOver = false;
+    
+    
     // eslint-disable-next-line @typescript-eslint/no-empty-function
     private constructor() { }
     public static getInstance(): Score {
@@ -17,27 +20,52 @@ class Score {
         }
         return Score.instance;
     }
-
+    public get gameIsOver(): boolean {
+        return this._gameIsOver;
+    }
+    public set gameIsOver(value: boolean) {
+        this._gameIsOver = value;
+    }
+ 
+    public get roundIsOver(): boolean {
+        return this._roundIsOver;
+    }
+    public set roundIsOver(value: boolean) {
+        this._roundIsOver = value;
+    }
+    public get lastRoundWinner(): Player | null {
+        return this._lastRoundWinner;
+    }
+    public get lastGameWinner(): Player | null {
+        return this._lastGameWinner;
+    }
     public get currentPlayer(): Player | null {
         return this._currentPlayer;
     }
     public get rounds(): number {
         return this._rounds;
     }
-
     public get topPoints(): number {
         return this._topPoints;
     }
+
     /**
-    * keeps record of who the next player is. 
-    * The information comes from the board.
+    * Adds 1 to the number of rounds
     * @param value 
     */
-    public writeRounds(value: number) {
-        this._rounds = value;
+    public addToRounds(): void {
+        this._rounds += 1;
     }
     /**
-     * keeps record of who the next player is. 
+    * resets the number of rounds when the game is over.
+    * @param value 
+    */
+    public resetRounds(): void {
+        this._rounds = 0;
+    }
+
+    /**
+     * writes record of who the next player is. 
      * The information comes from the board.
     * @param value 
     */
@@ -46,18 +74,21 @@ class Score {
     }
 
     /**
-    * The game is ended when one of the teams gets to total points
-    * @param Player
-    * @param param1
+    * writes record of who won the round. 
+    * The information comes from the board.
+    * @param value 
     */
-    public isGameOver(): boolean {
-        const { team1, team2 } = Board.getInstance();
-        if (team1 && team2) {
-            return team1.points >= this.topPoints ||
-                team2.points >= this.topPoints;
-        }
-        return false;
+    public writeRoundWinner(value: Player | null): void {
+        this._lastRoundWinner = value;
     }
 
+    /**
+   * writes record of who won the game. 
+   * The information comes from the board.
+   * @param value 
+   */
+    public writeGameWinner(value: Player | null): void {
+        this._lastGameWinner = value;
+    }
 }
 export default Score;

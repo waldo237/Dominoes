@@ -1,13 +1,13 @@
 import Domino from "../models/Domino";
 
 /**
- * takes in an array and randomly picks one element
+ * takes in an array and randomly picks one element to be removed and return
  * @param selection 
  * @returns 
  */
 function pickOne<T>(selection: T[]): T {
     const index = Math.round((Math.random() * selection.length - 1) + 0);
-    return selection[index];
+    return selection.splice(index, 1)[0]; //take the element at index and since an array is returned get [0]
 }
 
 /**

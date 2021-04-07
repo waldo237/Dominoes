@@ -13,7 +13,7 @@ import { Player } from "./Player";
  */
 export class Dealer {
     private static instance: Dealer;
-    private dominoes: Domino[] = populateDominoes();
+    private dominoes: Domino[] = shuffleWithRecursion(populateDominoes());
     private dominoesChain: DominoesChain = DominoesChain.getInstance();
 
     private constructor() { }
@@ -31,21 +31,26 @@ export class Dealer {
      */
     public shuffle(dominoes: Domino[]): Dealer {
         this.dominoes = shuffleWithRecursion(dominoes);
-        return this;
+        return this; 
+    }
+
+    public dominoesLength(): number {
+        
+        return this.dominoes.length; 
     }
 
     /**
      * gives 7 dominoes to each player and stays with none.
      */
-    public deal(players: Player[]): Dealer {
+    public deal(players: Player[]):void {
         players.forEach((player) => {
-            const sevenDominoes = this.dominoes.splice(this.dominoes.length - 8, 7);
+            const sevenDominoes = this.dominoes.splice(0, 7);
             player.receiveDominoes(sevenDominoes);
         })
-        return this;
+       
     }
     /**
-     * 🧪The dealer forced the next move 🧪:
+     * The dealer forced the next move:
      * • Cuando un jugador tiene una sola opción de colocar ficha, después de 3 segundos,
      * el programa lo hace automáticamente.
      * @param CurrentPlayer It can be null because it doesn't exist at the beginning of the game.
@@ -55,7 +60,8 @@ export class Dealer {
         if (CurrentPlayer && leads ) {
             if (CurrentPlayer.canPlayHand(leads)){
                 const timeOut = setTimeout(() => {
-                    CurrentPlayer.play(leads);
+                    CurrentPlayer.play(leads, null);
+                    // 🧨🧨🧨must pass it to chain🧨🧨🧨🧨
                 }, 3000);
                 clearTimeout(timeOut);
             }

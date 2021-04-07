@@ -24,7 +24,7 @@ class DominoesChain {
     public get store(): Domino[] {
         return this._store;
     }
-
+    // this sacrificies O(n) for inserts at the head
     private insertAtHead(domino: Domino): void {
         this._store = [domino, ...this._store];
     }
