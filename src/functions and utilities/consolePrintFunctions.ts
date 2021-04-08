@@ -52,7 +52,7 @@ function printHand(hand: Domino[]) {
  * @param dominoes
  */
 function printChainOfDominoes(dominoes: Domino[]): void {
- 
+
     printChainRecursively([...dominoes], dominoes.length);
 }
 
@@ -62,7 +62,7 @@ function printChainRecursively(dominoes: Domino[], length: number): Domino[] {
     const currDom = dominoes.shift();
     if (currDom)
         printDomino(currDom);
-        console.log(`dir: ${currDom?.direction}  first:${currDom?.firstInserted} | ${currDom?.side1} ${currDom?.side2} next:${currDom?.next}`)
+    // console.log(`dir: ${currDom?.direction}  first:${currDom?.firstInserted} | ${currDom?.side1} ${currDom?.side2} next:${currDom?.next}`)
     return printChainRecursively(dominoes, length - 1);
 }
 
@@ -74,19 +74,22 @@ function printDomino(currDom: Domino) {
     const { side1, side2, next } = currDom;
 
     if (currDom.isDouble()) {
-       return printDoubles(side1, side2);
-    } 
+        return printDoubles(side1, side2);
+    }
+    // if (currDom.firstInserted) {
+    //     return printUpwards(side1, side2);
+    // }
 
     if (currDom.direction) {
-        if(side1 !== next){
-            return  printUpwards(side1, side2);
-        }else{
+        if (side1 !== next) {
+            return printUpwards(side1, side2);
+        } else {
             return printDownwards(side1, side2);
         }
-    }else{
-        if(side1 !== next){
+    } else {
+        if (side1 !== next) {
             printDownwards(side1, side2);
-        }else{
+        } else {
             printUpwards(side1, side2);
         }
     }
@@ -106,4 +109,4 @@ function printDoubles(side1: number, side2: number): void {
 }
 
 
-export {brandLong, printChainOfDominoes, printHand, printScores}
+export { brandLong, printChainOfDominoes, printHand, printScores }

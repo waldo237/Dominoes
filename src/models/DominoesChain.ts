@@ -49,7 +49,7 @@ class DominoesChain {
 
     /**
      * Follows a complex control flow to simulate laying a domino on a table.
-     * @param domino 🧨🧨🧨🧨🧨🧨🧨🧨🧨NEEDS TO BE REFACTORED BECAUSE IT'S TOO REPETIIVE🎇🎇🧨🧨🧨🎇🧨
+     * @param domino 
      * @returns void
      */
     public addDomino(domino: Domino): void {
@@ -59,97 +59,86 @@ class DominoesChain {
                 // if both faces of the domino are equal, any of them can be the next.
                 domino.firstInserted = true;
                 domino.direction = false;
-                this.insertAtTail(domino);
+               return this.insertAtTail(domino);
             } else {
-                // the next dominoes don't need to know the direction, its only one.
+                // the very next domino will set the direction and the next property.
                 domino.direction = false;
                 //Signal that any of the sides can be next.
                 domino.firstInserted = true;
-                this.insertAtTail(domino);
+               return this.insertAtTail(domino);
             }
         } else {
             // The second domino in the chain. if so, set the direction to true.
             if (this._store.length === 1) {
-                const firstDomino = this._store[0];
+                const firstDomino = this.getHead();
                 // check against the first domino
                 if (side1 === firstDomino.side1) {
                     domino.next = side2;
+                    firstDomino.next = firstDomino.side2;
                     domino.direction = true; //initialize a direction
                     return this.insertAtTail(domino);
                 } else if (side1 === firstDomino.side2) {
                     domino.next = side2;
+                    firstDomino.next = firstDomino.side1;
                     domino.direction = true; //initialize a direction
                     return this.insertAtTail(domino);
-                } else if (side2 === firstDomino.side1) {
+                }else if (side2 === firstDomino.side1) {
                     domino.next = side1;
+                    firstDomino.next = firstDomino.side2;
                     domino.direction = true; //initialize a direction
                     return this.insertAtTail(domino);
                 }else if (side2 === firstDomino.side2) {
                     domino.next = side1;
+                    firstDomino.next = firstDomino.side1;
                     domino.direction = true; //initialize a direction
                     return this.insertAtTail(domino);
                 }
             }
-            // the rest of the cases;
+
+            // the rest of the numbers
             const head = this.getHead();
             const tail = this.getTail();
-           
-            if ( side1 === head.side1 && head.firstInserted){
-                domino.next = side2;
-                domino.direction = head.direction;
-                this.insertAtHead(domino);
-            }else if( side1 === head.side2 && head.firstInserted){
-                domino.next = side2;
-                domino.direction = head.direction;
-                this.insertAtHead(domino);
-            }else if ( side2 === head.side1 && head.firstInserted){
-                domino.next = side1;
-                domino.direction = head.direction;
-                this.insertAtHead(domino);
-            }else if( side2 === head.side2 && head.firstInserted){
-                domino.next = side1;
-                domino.direction = head.direction;
-                this.insertAtHead(domino);
-            }
-              
+
+
             if (side1 === head.next) {
                 domino.next = side2;
                 domino.direction = head.direction;
-                this.insertAtHead(domino);
+               return this.insertAtHead(domino);
             } else if (side1 === tail.next) {
                 domino.next = side2;
                 domino.direction = tail.direction;
-                this.insertAtTail(domino);
+                return this.insertAtTail(domino);
             }
             else if (side2 === head.next) {
                 domino.next = side1;
                 domino.direction = head.direction;
-                this.insertAtHead(domino);
+                return this.insertAtHead(domino);
             } else if (side2 === tail.next) {
                 domino.next = side1;
                 domino.direction = tail.direction;
-                this.insertAtTail(domino);
+                return this.insertAtTail(domino);
             }
         }
+        console.log('Hey! Esa ficha no cabe en esta mano!!')
     }
 
     /**
      * shows the outside whats on the two ends of the _store.
      * It may be null so it must be handled properly.
      */
-    public showLeads(): Leads |null {
+    public showLeads(): Leads | null {
         // if there is only one domino and is double, both of its sides will be the two leads.
         const head = this.getHead();
         const tail = this.getTail();
-        if(!head){
-            return null; 
+        if (!head) {
+            return null;
         }
         if (this.getSize() === 1) {
             const lead1 = head.side1;
             const lead2 = tail.side2;
             const leads = new Leads(lead1, lead2);
             return leads;
-        }else{
+        } else {
             const lead1 = tail.next;
             const lead2 = tail.next;
 
