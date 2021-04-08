@@ -17,7 +17,6 @@ const dealer = Dealer.getInstance();
 board.init(teamSchema1, teamSchema2);
 const players = board.playersArray;
 dealer.deal(players);
-dealer.monitorAndForceNextMove(board.nextPlayer());
 players.forEach(p => {
     p.dominoes.forEach((d) => DominoesChain.getInstance().addDomino(d))
 })

@@ -46,11 +46,10 @@ export class Player {
      */
     public play(leads: Leads | null, input: Domino | null): Domino | null {
         let res: Domino | null = null;
-        console.log('from player.play: the input was', input)
-        const optionsAvailable:Domino[] = [];
+        const optionsAvailable: Domino[] = [];
         this.dominoes.forEach((currentDomino) => {
-            if(this.compareHandWithBoard(currentDomino, leads)){
-                optionsAvailable.push(this.snatchOne(currentDomino)) 
+            if (this.compareHandWithBoard(currentDomino, leads)) {
+                optionsAvailable.push(this.snatchOne(currentDomino))
             }
         });
 
@@ -58,16 +57,16 @@ export class Player {
             if (this.hasDoubleSixInRound1(0)) {
                 return res = this.playDoubleSix(0);
             } else if (optionsAvailable.length > 1) { //if you have more than one option
-              const selected =  pickOne(optionsAvailable);//pick randomly.
+                const selected = pickOne(optionsAvailable);//pick randomly.
                 this.dominoes.push(...optionsAvailable); //return the ones you didn't use.
-                return res =selected
-            } else  {
+                return res = selected
+            } else {
                 return res = optionsAvailable[0]
             }
         }
         //not the first one playing
         if (optionsAvailable.length > 1) { // you have more than one option
-            const selected =  pickOne(optionsAvailable);//pick randomly.
+            const selected = pickOne(optionsAvailable);//pick randomly.
             this.dominoes.push(...optionsAvailable); //return the ones you didn't use.
             return res = selected;
         } else if (optionsAvailable.length === 1) {//if there is only one option
@@ -79,6 +78,8 @@ export class Player {
                 return res = optionsAvailable[0];
             }
         }
+        console.clear()
+        console.log('❌❌❌❌❌ No va..❌❌❌❌❌')
         return res;
     }
 
@@ -155,9 +156,10 @@ export class Player {
     }
 
     public totalPointsInHand(): number {
+        // return
         return this.dominoes
-            .map((domino) => domino.side1 + domino.side2)
-            .reduce((group, current) => group + current);
+            .map((domino) => (domino) ? domino.side1 + domino.side2 : 0)
+            .reduce((sum, num) => sum + num, 0);
     }
 
 }

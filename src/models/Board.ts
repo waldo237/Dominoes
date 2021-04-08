@@ -47,9 +47,6 @@ class Board {
         return this._team2;
     }
 
-    public aPlayerHasWon(): boolean {
-        return this.playersArray?.some(player => !player.hasDominoes());
-    }
     public winningPlayer(): Player | null {
         return this.playersArray?.find(player => !player.hasDominoes()) || null;
     }
@@ -86,7 +83,7 @@ class Board {
         if (rounds === 0 && !currentPlayer) { //first round and the first player
             meetsConditions = players.find((player) => player.hasDoubleSixInRound1(rounds)); //the player with 6/6
         } else {
-            if(currentPlayer) meetsConditions = this.findNextPInLine(currentPlayer);
+            if (currentPlayer) meetsConditions = this.findNextPInLine(currentPlayer);
         }
         return meetsConditions || null;
     }

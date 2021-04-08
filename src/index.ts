@@ -1,14 +1,14 @@
 
 import Game from "./models/Game";
 
-function main():void {
+function main(): void {
 
   const game = Game.getInstance();
 
-   game.run();
+  game.run();
 
 }
 
 main()
 
-export default main; 
+export default main;

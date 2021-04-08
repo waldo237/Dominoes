@@ -31,9 +31,7 @@ class DominoesChain {
     private insertAtTail(domino: Domino): void {
         this._store.push(domino);
     }
-    public reset(): void {
-        this._store = [];
-    }
+
     public isEmpty(): boolean {
         return this._store.length === 0;
     }
@@ -47,6 +45,9 @@ class DominoesChain {
         return this._store.length;
     }
 
+    public returnDominoes(): Domino[] {
+        return this._store.splice(0, this._store.length - 1);
+    }
     /**
      * Follows a complex control flow to simulate laying a domino on a table.
      * @param domino 
@@ -59,13 +60,13 @@ class DominoesChain {
                 // if both faces of the domino are equal, any of them can be the next.
                 domino.firstInserted = true;
                 domino.direction = false;
-               return this.insertAtTail(domino);
+                return this.insertAtTail(domino);
             } else {
                 // the very next domino will set the direction and the next property.
                 domino.direction = false;
                 //Signal that any of the sides can be next.
                 domino.firstInserted = true;
-               return this.insertAtTail(domino);
+                return this.insertAtTail(domino);
             }
         } else {
             // The second domino in the chain. if so, set the direction to true.
@@ -82,12 +83,12 @@ class DominoesChain {
                     firstDomino.next = firstDomino.side1;
                     domino.direction = true; //initialize a direction
                     return this.insertAtTail(domino);
-                }else if (side2 === firstDomino.side1) {
+                } else if (side2 === firstDomino.side1) {
                     domino.next = side1;
                     firstDomino.next = firstDomino.side2;
                     domino.direction = true; //initialize a direction
                     return this.insertAtTail(domino);
-                }else if (side2 === firstDomino.side2) {
+                } else if (side2 === firstDomino.side2) {
                     domino.next = side1;
                     firstDomino.next = firstDomino.side1;
                     domino.direction = true; //initialize a direction
@@ -103,7 +104,7 @@ class DominoesChain {
             if (side1 === head.next) {
                 domino.next = side2;
                 domino.direction = head.direction;
-               return this.insertAtHead(domino);
+                return this.insertAtHead(domino);
             } else if (side1 === tail.next) {
                 domino.next = side2;
                 domino.direction = tail.direction;
@@ -139,7 +140,7 @@ class DominoesChain {
             const leads = new Leads(lead1, lead2);
             return leads;
         } else {
-            const lead1 = tail.next;
+            const lead1 = head.next;
             const lead2 = tail.next;
 
             const leads = new Leads(lead1, lead2);

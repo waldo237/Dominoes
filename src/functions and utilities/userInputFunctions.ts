@@ -47,9 +47,8 @@ function listenForInput(): void {
     catchInputRecursively(!Score.getInstance().roundIsOver);
 }
 
-async function catchInputRecursively(roundIsActive: boolean ): Promise<boolean> {
+async function catchInputRecursively(roundIsActive: boolean): Promise<boolean> {
     if (!roundIsActive) { //base case
-        rl.on('line', () => rl.close());
         return roundIsActive;
     }
 
@@ -61,12 +60,10 @@ async function catchInputRecursively(roundIsActive: boolean ): Promise<boolean> 
         const moveWasDone = false;
         const { dominoes } = currentPlayer;
         const chain = DominoesChain.getInstance();
-        printScores(true); //refesh the screen if another num
+        if (roundIsActive) printScores(true); //refesh the screen if another num
         const index = await moveHorizontally(counter, dominoes, inputted, moveWasDone);
 
-
         const playedDomino = currentPlayer.play(chain.showLeads(), dominoes[index]);
-        console.log('userInputFunctions: what was really played', playedDomino)
         playedDomino && chain.addDomino(playedDomino);//put the domino in the chain
         score.writeCurrentPlayer(Board.getInstance().nextPlayer()); //update board
         Game.getInstance().stateMonitor();
@@ -85,7 +82,6 @@ async function catchInputRecursively(roundIsActive: boolean ): Promise<boolean> 
  */
 async function moveHorizontally(counter: number, dominoesHand: Domino[], inputted: Domino | null, moveWasDone: boolean): Promise<number> {
     if (moveWasDone) return counter; //base case
-
     const userInput = await askForNumber(' usa  🡐(4 + Enter)   (6 + Enter)🡒  para navegar, (0 + Enter) para seleccionar: ');
     if (userInput == 6) { //arrow forward
         (counter + 1 === dominoesHand.length)
@@ -107,6 +103,7 @@ async function moveHorizontally(counter: number, dominoesHand: Domino[], inputte
         printScores(true); //refesh the screen if another num
         console.log('solo usa 4, 6, 0');
     }
+
     return moveHorizontally(counter, dominoesHand, inputted, moveWasDone);
 }
 
@@ -143,13 +140,12 @@ async function welcome(): Promise<{ teamSchema1: teamNames; teamSchema2: teamNam
         .then((name: any) => {
             T2Names['player2'] = name;
         })
-        .finally(() => { brandLong('starting...') })
         .catch(e => console.log(e));
     return { teamSchema1: T1Names, teamSchema2: T2Names }
 
 }
 /**
- * Is the start of the game with the player that has [6/6]
+ * Start the first round with [6/6]
  * @returns 
  */
 async function firstMove(): Promise<string> {
@@ -159,14 +155,36 @@ async function firstMove(): Promise<string> {
     if (currentPlayer) {
         score.writeCurrentPlayer(currentPlayer); //update the scores before
 
-        const d6 = currentPlayer.playDoubleSix(0);
-        if (d6) DominoesChain.getInstance().addDomino(d6); //force the first move with 6/6
+        const d66 = currentPlayer.playDoubleSix(0);
+        if (d66) DominoesChain.getInstance().addDomino(d66); //force the first move with 6/6
 
         const nextP = Board.getInstance().nextPlayer();
         score.writeCurrentPlayer(nextP); //update the scores after
 
         printScores(false);
         res = await ask(`La primera jugada fue efectuada por ${currentPlayer.name} con 6/6.\n Estan listos para continuar?`)
+    }
+    return res;
+}
+
+/**
+ * Start a consecutive round with the winner of the previous game.
+ * @returns 
+ */
+async function consecutiveMove(): Promise<string> {
+    let res = "";
+    const score = Score.getInstance();
+    const { currentPlayer, rounds } = Score.getInstance();
+    if (currentPlayer) {
+        score.writeCurrentPlayer(currentPlayer); //update the scores before
+
+        const selectedDomino = currentPlayer.play(null, null);
+        if (selectedDomino) DominoesChain.getInstance().addDomino(selectedDomino); //force the first move with 6/6
+
+        const nextP = Board.getInstance().nextPlayer();
+        score.writeCurrentPlayer(nextP); //update the scores after
+        console.log("\x1b[34m")
+        res = await ask(`Esta es la partida número ${rounds + 1}. empezó a jugar ${currentPlayer.name}, ${currentPlayer.name} Ganó la mano anterior.\n están listos para continuar?`)
     }
     return res;
 }
@@ -182,30 +200,29 @@ async function firstMove(): Promise<string> {
 async function displayCelebration(ocation: string, winner: Player, winningTeam: Team, afterCelebration: Function): Promise<number> {
     let res = -1;
     if (ocation === 'round') {
-        printScores(false);
-        console.log(`%c ${winner.name} ha ganado la partida y aporto ${winningTeam && winningTeam.points}  a para su equipo! felicitaciones, ${winningTeam && winningTeam.name}🎉🎊!.`, "color:blue");
-        res = await askForNumber('presiona 0 y Enter para ir al seguir jugando.').then(answer => {
+        console.log("\x1b[31m");
+        res = await askForNumber(`${winner.name} ha ganado la partida y aporto ${winningTeam && winningTeam.points}  a para su equipo! felicitaciones, ${winningTeam && winningTeam.name} 🎉🎊!\npresiona 0 y Enter para ir al seguir jugando..`).then(answer => {
             if (answer === 0) { afterCelebration() }
             return answer || -1;
         });
     }
     if (ocation === 'game') {
-        printScores(false);
-        console.log("%c 💛💛GAME OVER💛💛", "color:green");
-        console.log(`%c ${winner.name} gano el juego. Hooray para el equipo ${winningTeam && winningTeam.name}🎉🎊!.`, "color:blue");
+        console.log("\x1b[34m");
+        console.log("💛💛GAME OVER💛💛");
+        console.log(`${winner.name} gano el juego. Hooray para el equipo ${winningTeam && winningTeam.name} 🎉🎊!.`);
         res = await askForNumber('presiona 5 Enter para salir de juego o 0 y Enter para continuar ').then(answer => {
             if (answer === 0) afterCelebration();
-            if (answer === 5) rl.close; process.exit(0);
+            if (answer === 5) rl.close; process.exit(0); //close the rl event and the game.
         });
     }
     return res;
 }
 
-async function askAfterPregunta1(prompt:string): Promise<string>{
+async function askAfterPregunta1(prompt: string): Promise<string> {
     let res = "";
-    res =await ask(prompt);
+    res = await ask(prompt);
     return res;
 }
 
 
-export { welcome, displayCelebration, listenForInput, firstMove, askAfterPregunta1 }
+export { welcome, displayCelebration, listenForInput, firstMove, askAfterPregunta1, consecutiveMove }

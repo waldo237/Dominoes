@@ -1,5 +1,6 @@
 import Board from "./Board";
 import { Dealer } from "./Dealer";
+import Game from "./Game";
 import { Player } from "./Player";
 
 const teamSchema1 = {
@@ -30,5 +31,14 @@ describe("The dominoes were distributed correctly ", () => {
 describe("The Game is initialized correctly", () => {
     test("- test5.1: 🧪The very first game was started by the player with [6|6]🧪:", async () => {
         expect(Board.getInstance().nextPlayer()).toBeInstanceOf(Player);
+    });
+});
+
+describe("The Game collects the all the points in the avaiable dominoes", () => {
+    test("function give 168pts to team1:", async () => {
+        const team1 = Board.getInstance().team1
+        if (team1) Game.getInstance().distributePoints(team1)
+        expect(team1?.points).toBe(168);
+
     });
 });

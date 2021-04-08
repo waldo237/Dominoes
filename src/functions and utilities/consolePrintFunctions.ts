@@ -25,7 +25,7 @@ function printScores(withHand: boolean): void {
     console.log(`  team1: ${team1?.points}/ ${topPoints}pts    |    Manos ganadas ${team1?.wins} `)
     console.log(`  team2: ${team2?.points}/ ${topPoints}pts    |    Manos ganadas ${team2?.wins} `)
     console.log("\x1b[32m", `  Jugador de turno: ${currentPlayer?.name} `)
-    const hand = currentPlayer?.dominoes;
+    const hand = Score.getInstance().currentPlayer?.dominoes;
     if (store) printChainOfDominoes(store);
     withHand ? printHand(hand || []) : "";
 }

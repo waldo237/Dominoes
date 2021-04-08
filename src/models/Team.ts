@@ -7,8 +7,8 @@ export class Team {
     private _player1: Player;
     private _player2: Player;
     private _name: string;
-    
-    constructor(name:string, player1: Player, player2: Player) {
+
+    constructor(name: string, player1: Player, player2: Player) {
         this._name = name;
         this._player1 = player1;
         this._player2 = player2;
@@ -41,13 +41,13 @@ export class Team {
     public get player2(): Player {
         return this._player2;
     }
-    public clearPoints():void{
+    public clearPoints(): void {
         this._points = 0;
     }
-       /**
-     * It adds one to the wins property.
-     */
-    public addWin():void {
+    /**
+   * It adds one to the wins property.
+   */
+    public addWin(): void {
         this._wins += 1;
     }
 }

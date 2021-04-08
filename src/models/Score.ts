@@ -10,8 +10,8 @@ class Score {
     private _lastGameWinner: Player | null = null;
     private _roundIsOver = false;
     private _gameIsOver = false;
-    
-    
+
+
     // eslint-disable-next-line @typescript-eslint/no-empty-function
     private constructor() { }
     public static getInstance(): Score {
@@ -26,7 +26,7 @@ class Score {
     public set gameIsOver(value: boolean) {
         this._gameIsOver = value;
     }
- 
+
     public get roundIsOver(): boolean {
         return this._roundIsOver;
     }

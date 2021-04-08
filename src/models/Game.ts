@@ -1,9 +1,10 @@
 
-import { brandLong, printHand, printScores } from "../functions and utilities/consolePrintFunctions";
-import { listenForInput, displayCelebration, welcome, firstMove, askAfterPregunta1 } from "../functions and utilities/userInputFunctions";
+import { brandLong, printHand } from "../functions and utilities/consolePrintFunctions";
+import { listenForInput, displayCelebration, welcome, firstMove, askAfterPregunta1, consecutiveMove } from "../functions and utilities/userInputFunctions";
 import Board from "./Board";
 import { Dealer } from "./Dealer";
 import Domino from "./Domino";
+import DominoesChain from "./DominoesChain";
 import { Player } from "./Player";
 import Score from "./Score";
 import { Team } from "./Team";
@@ -30,13 +31,18 @@ class Game {
      * initializes the dealer
      */
     public async run(): Promise<void> {
-        const { teamSchema1, teamSchema2 } = await welcome();
-        this.board.init(teamSchema1, teamSchema2);
-        const players = this.board.playersArray;
-        this.dealer.deal(players);
-        this.dealer.monitorAndForceNextMove(this.board.nextPlayer());
-        await this.pregunta1();
-        await this.pregunta2y3();
+        try {
+            const { teamSchema1, teamSchema2 } = await welcome();
+            this.board.init(teamSchema1, teamSchema2);
+            const players = this.board.playersArray;
+            this.dealer.deal(players);
+            // this.dealer.monitorAndForceNextMove(this.board.nextPlayer());
+            await this.pregunta1();
+            await this.pregunta2y3();
+            
+        } catch (error) {
+            console.log(error)
+        }
 
     }
 
@@ -52,7 +58,7 @@ class Game {
             printHand(player.dominoes);
             console.log('\n');
         }
-        await askAfterPregunta1('Quieres ir a la pregunta 2?')
+        await askAfterPregunta1('Quieres ir a la pregunta 2❓. Presiona Enter')
     }
 
     /**
@@ -63,10 +69,16 @@ class Game {
         listenForInput();
     }
 
+    async consecutiveRound(): Promise<void> {
+        await consecutiveMove();
+        listenForInput();
+    }
+
     public reStartRound(): void {
         const players = this.board.playersArray;
-        const dominoes = this.collectDominoes();
-        this.dealer.shuffle(dominoes)
+        const dominoesFromThePlayers = this.collectDominoes();
+        const dominoesFromTheChain = DominoesChain.getInstance().returnDominoes()
+        this.dealer.shuffle([...dominoesFromThePlayers, ...dominoesFromTheChain])
             .deal(players);
     }
 
@@ -80,15 +92,14 @@ class Game {
     /**
      * checks the state of the game after every move.
      */
-    public stateMonitor():void {
-        if (this.board.aPlayerHasWon()) {
-            const winner = this.board.winningPlayer();
-            if (winner) {
-                const winningTeam = this.board.belongingTeam(winner)
-                if (winningTeam) {
-                    this.roundOrGameOver(winningTeam, winner);
-                }
+    public stateMonitor(): void {
+        const winner = this.board.winningPlayer();
+        if (winner !== null) {
+            const winningTeam = this.board.belongingTeam(winner)
+            if (winningTeam) {
+                this.roundOrGameOver(winningTeam, winner);
             }
+
         } else if (this.board.isDeadLock()) { //if none of the players can continue
             console.log('Hubo un tranque');
             const currentP = this.score.currentPlayer;
@@ -99,11 +110,11 @@ class Game {
 
                 if (ptsInC <= ptsInN) { //the player with the least pts wins.
                     const winningTeam = this.board.belongingTeam(currentP)
-                    console.log(`y lo gano:, ${currentP.name} con ${ptsInC} sobre ${ptsInN} a ${nextP}.`);
+                    console.log(`y lo gano:, ${currentP.name} con ${ptsInC} sobre ${ptsInN} a ${nextP.name}.`);
                     if (winningTeam) this.roundOrGameOver(winningTeam, currentP)
                 } else {
                     const winningTeam = this.board.belongingTeam(nextP)
-                    console.log(`y lo gano:, ${nextP.name} con ${ptsInN} sobre ${ptsInC} a ${currentP}.`);
+                    console.log(`y lo gano:, ${nextP.name} con ${ptsInN} sobre ${ptsInC} a ${currentP.name}.`);
                     if (winningTeam) this.roundOrGameOver(winningTeam, nextP)
                 }
             }
@@ -111,6 +122,8 @@ class Game {
     }
 
     private roundOrGameOver(winningTeam: Team, winner: Player) {
+        this.distributePoints(winningTeam); //get the points first
+        console.log('/🚌🚙🚙🚜🚛🚛🛹🛹🚈🛵🛴🚲🚲🛹🛹🦼🦼🦽🦽🦽🦽🦽🦼🚅🚅🚅')
         if (winningTeam.points >= this.score.topPoints) { //reached top(200)
             this.gameOver(winner, winningTeam);
         } else {
@@ -122,12 +135,17 @@ class Game {
     * The game is ended when one of the teams gets to total points
     */
     private async gameOver(winner: Player, winningTeam: Team): Promise<void> {
-        this.score.writeGameWinner(this.board.winningPlayer());
-        this.score.resetRounds();
-        this.score.roundIsOver = true;
-        this.score.gameIsOver = true;
-        this.score.writeCurrentPlayer(null);
-        await displayCelebration('game', winner, winningTeam, this.pregunta2y3);
+        try {
+            this.score.writeGameWinner(this.board.winningPlayer());
+            this.score.resetRounds();
+            this.score.roundIsOver = true;
+            this.score.gameIsOver = true;
+            this.score.writeCurrentPlayer(null);
+            await displayCelebration('game', winner, winningTeam, this.pregunta2y3);
+            
+        } catch (error) {
+            console.log(error);
+        }
     }
 
     /**
@@ -136,20 +154,29 @@ class Game {
     * The resulting poings after a game is ended go to the winning team
     */
     private async RoundOver(winner: Player, winningTeam: Team) {
-        this.distributePoints(winningTeam);
-        this.score.roundIsOver = true;
-        await displayCelebration('round', winner, winningTeam, this.pregunta2y3);
-        this.reStartRound();
+        try {
+            
+            this.score.roundIsOver = true;
+            this.score.addToRounds();
+            this.score.writeCurrentPlayer(this.score.currentPlayer); //allow the previous player to continue playing.
+            this.score.writeRoundWinner(this.score.currentPlayer);
+
+            await displayCelebration('round', winner, winningTeam, this.consecutiveRound);
+            this.reStartRound();
+
+        } catch (error) {
+            console.log(error);
+        }
     }
     /**
      * After a round is over, all the points in the dominoes available, go to the winning team.
      */
-    private distributePoints(winningTeam: Team): void {
+    public distributePoints(winningTeam: Team): void { //public for testing
         const players = this.board.playersArray;
-        const totalPoints = players && players
-            .map((player) => player.totalPointsInHand())
-            .reduce((sum, num) => sum + num);
+        const totalPoints = players.map((player) => player.totalPointsInHand())
+            .reduce((sum, num) => sum + num, 0);
         winningTeam.points = totalPoints;
+
     }
 }
 
