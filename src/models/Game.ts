@@ -1,4 +1,5 @@
 
+import { printScores } from "../functions and utilities/consolePrintFunctions";
 import { listenForInput, displayCelebration, pregunta1, pregunta2, welcome } from "../functions and utilities/userInputFunctions";
 import Board from "./Board";
 import { Dealer } from "./Dealer";
@@ -30,13 +31,28 @@ class Game {
      * initializes the dealer
      */
     public async run(): Promise<void> {
-        const { teamSchema1, teamSchema2 } = await welcome();
+        // const { teamSchema1, teamSchema2 } = await welcome();
+
+        const teamSchema1 = {
+            player1: 'juan',
+            player2: 'Maria'
+        },
+            teamSchema2 = {
+                player1: 'Carla',
+                player2: 'Pedro'
+            };
+
         this.board.init(teamSchema1, teamSchema2);
         const players = this.board.playersArray;
         this.dealer.deal(players);
         this.dealer.monitorAndForceNextMove(this.board.nextPlayer());
+        players.forEach(p=>{
+            p.dominoes.forEach((d)=>  DominoesChain.getInstance().addDomino(d))
+            printScores(true)
+        })
+      
         // pregunta1()
-        pregunta2();
+        // pregunta2();
 
     }
 

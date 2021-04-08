@@ -52,17 +52,17 @@ function printHand(hand: Domino[]) {
  * @param dominoes
  */
 function printChainOfDominoes(dominoes: Domino[]): void {
-    const { length } = dominoes;
-
-    printChainRecursively([...dominoes], length);
+ 
+    printChainRecursively([...dominoes], dominoes.length);
 }
 
 function printChainRecursively(dominoes: Domino[], length: number): Domino[] {
     if (length === 0)
         return dominoes; //base case
-    const currDom = dominoes.pop();
+    const currDom = dominoes.shift();
     if (currDom)
         printDomino(currDom);
+        console.log(`dir: ${currDom?.direction}  first:${currDom?.firstInserted} | ${currDom?.side1} ${currDom?.side2} next:${currDom?.next}`)
     return printChainRecursively(dominoes, length - 1);
 }
 
@@ -71,22 +71,33 @@ function printChainRecursively(dominoes: Domino[], length: number): Domino[] {
  */
 function printDomino(currDom: Domino) {
 
-    const { side1, side2 } = currDom;
+    const { side1, side2, next } = currDom;
 
     if (currDom.isDouble()) {
-        printDoubles(side1, side2);
-    } else if (currDom.direction) {
-        printUpwards(side1, side2);
-    } else {
-        printDownwards(side2, side1);
+       return printDoubles(side1, side2);
+    } 
+
+    if (currDom.direction) {
+        if(side1 !== next){
+            return  printUpwards(side1, side2);
+        }else{
+            return printDownwards(side1, side2);
+        }
+    }else{
+        if(side1 !== next){
+            printDownwards(side1, side2);
+        }else{
+            printUpwards(side1, side2);
+        }
     }
+
 }
 
 function printUpwards(front: number, back: number): void {
     console.log(`      ⌜${front}⌝\n` + `      ⎸—⎹      \n` + `      ⌞${back}⌟`);
 }
-function printDownwards(back: number, front: number): void {
-    console.log(`      ⌜${front}⌝\n` + `      ⎸—⎹      \n` + `      ⌞${back}⌟`);
+function printDownwards(front: number, back: number): void {
+    console.log(`      ⌜${back}⌝\n` + `      ⎸—⎹      \n` + `      ⌞${front}⌟`);
 }
 function printDoubles(side1: number, side2: number): void {
     if (side1 === side1) {

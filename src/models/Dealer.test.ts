@@ -29,6 +29,6 @@ describe("The dominoes were distributed correctly ", () => {
 
 describe("The Game is initialized correctly", () => {
     test("- test5.1: 🧪The very first game was started by the player with [6|6]🧪:", async () => {
-        expect(Board.getInstance().nextPlayer).toBeInstanceOf(Player);
+        expect(Board.getInstance().nextPlayer()).toBeInstanceOf(Player);
     });
-});
+}); 

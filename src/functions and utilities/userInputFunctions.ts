@@ -87,7 +87,7 @@ async function moveHorizontally(counter: number, dominoesHand: Domino[], inputte
 
     const userInput = await askForNumber('Escoje con el 0.\n  🡐4    6🡒  ');
     if (userInput == 6) { //arrow forward
-        (counter + 1 === dominoesHand.length - 1)
+        (counter + 1 === dominoesHand.length)
             ? counter = 0
             : counter += 1;
         inputted = dominoesHand[counter]

@@ -68,7 +68,7 @@ class DominoesChain {
                 this.insertAtTail(domino);
             }
         } else {
-            // The second domino in the chain. if so set the direction to true.
+            // The second domino in the chain. if so, set the direction to true.
             if (this._store.length === 1) {
                 const firstDomino = this._store[0];
                 // check against the first domino
@@ -90,6 +90,7 @@ class DominoesChain {
                     return this.insertAtTail(domino);
                 }
             }
+            // the rest of the cases;
             const head = this.getHead();
             const tail = this.getTail();
            
@@ -102,11 +103,11 @@ class DominoesChain {
                 domino.direction = head.direction;
                 this.insertAtHead(domino);
             }else if ( side2 === head.side1 && head.firstInserted){
-                domino.next = side2;
+                domino.next = side1;
                 domino.direction = head.direction;
                 this.insertAtHead(domino);
             }else if( side2 === head.side2 && head.firstInserted){
-                domino.next = side2;
+                domino.next = side1;
                 domino.direction = head.direction;
                 this.insertAtHead(domino);
             }

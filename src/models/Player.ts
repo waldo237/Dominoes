@@ -40,14 +40,11 @@ export class Player {
 
     /**
      * simulates a move passing the returned domino to the dominoes chain.
-     * @param leads  
      * The next move is randomized  when there is more than one option.: 
+     * @param leads  
      * @returns 
      */
     public play(leads: Leads | null, input: Domino | null): Domino | null {
-        //🧨🧨up til here you are working with input that is a copy and it hasn't  been taken away from the array.🧨🧨
-        console.log(`${this.name} selected Domino`, input)
-        console.log(`${this.name} selected leads`, leads)
         let res: Domino | null = null;
         const selection = this.dominoes.filter((currentDomino) => {
             return this.compareHandWithBoard(currentDomino, leads);
@@ -62,6 +59,7 @@ export class Player {
                 res = this.snatchOne(input);
             }
         }
+
         if (selection.length > 1) { //if you have more than one option
             res = pickOne(selection);//pick randomly.
         } else if (selection.length === 1) {//if there is only one option
@@ -72,7 +70,6 @@ export class Player {
                 res = res = this.snatchOne(selection[0]);
             }
         }
-        console.log('this is the response', res);
         return res;
     }
     private snatchOne(input: Domino) {
