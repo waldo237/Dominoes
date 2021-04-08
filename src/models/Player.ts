@@ -46,35 +46,45 @@ export class Player {
      */
     public play(leads: Leads | null, input: Domino | null): Domino | null {
         let res: Domino | null = null;
-        const selection = this.dominoes.filter((currentDomino) => {
-            return this.compareHandWithBoard(currentDomino, leads);
+        console.log('from player.play: the input was', input)
+        const optionsAvailable:Domino[] = [];
+        this.dominoes.forEach((currentDomino) => {
+            if(this.compareHandWithBoard(currentDomino, leads)){
+                optionsAvailable.push(this.snatchOne(currentDomino)) 
+            }
         });
 
-        if (leads === null) { //if the dominoes chain is empty. 
-            if (input?.side1 === 6 && input?.side2 === 6) {
-                res = this.snatchOne(input);
-            } else if (selection.length > 1) { //if you have more than one option
-                res = pickOne(selection);//pick randomly.
-            } else if (input) { 
-                res = this.snatchOne(input);
+        if (leads === null) { //if the dominoes chain is empty, you are the first playing.
+            if (this.hasDoubleSixInRound1(0)) {
+                return res = this.playDoubleSix(0);
+            } else if (optionsAvailable.length > 1) { //if you have more than one option
+              const selected =  pickOne(optionsAvailable);//pick randomly.
+                this.dominoes.push(...optionsAvailable); //return the ones you didn't use.
+                return res =selected
+            } else  {
+                return res = optionsAvailable[0]
             }
         }
-
-        if (selection.length > 1) { //if you have more than one option
-            res = pickOne(selection);//pick randomly.
-        } else if (selection.length === 1) {//if there is only one option
+        //not the first one playing
+        if (optionsAvailable.length > 1) { // you have more than one option
+            const selected =  pickOne(optionsAvailable);//pick randomly.
+            this.dominoes.push(...optionsAvailable); //return the ones you didn't use.
+            return res = selected;
+        } else if (optionsAvailable.length === 1) {//if there is only one option
             if (input) {//coming from the user.
-                res = this.snatchOne(input);
-            } else {//dealer played
+                // what if the user played the wrong card? 
+                return res = optionsAvailable[0];
+            } else {//the domino is null and it could only have come from dealer.
                 console.log('El arbitro decidio porque el jugador tomo demasiado tiempo.')
-                res = res = this.snatchOne(selection[0]);
+                return res = optionsAvailable[0];
             }
         }
         return res;
     }
+
     private snatchOne(input: Domino) {
         const index = this.dominoes.findIndex((dom) => dom === input);
-        return  this.dominoes.splice(index, 1)[0];
+        return this.dominoes.splice(index, 1)[0];
     }
 
     /**

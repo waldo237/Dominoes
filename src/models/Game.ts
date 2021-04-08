@@ -1,10 +1,9 @@
 
-import { printScores } from "../functions and utilities/consolePrintFunctions";
-import { listenForInput, displayCelebration, pregunta1, pregunta2, welcome } from "../functions and utilities/userInputFunctions";
+import { brandLong, printHand, printScores } from "../functions and utilities/consolePrintFunctions";
+import { listenForInput, displayCelebration, welcome, firstMove, askAfterPregunta1 } from "../functions and utilities/userInputFunctions";
 import Board from "./Board";
 import { Dealer } from "./Dealer";
 import Domino from "./Domino";
-import DominoesChain from "./DominoesChain";
 import { Player } from "./Player";
 import Score from "./Score";
 import { Team } from "./Team";
@@ -31,29 +30,37 @@ class Game {
      * initializes the dealer
      */
     public async run(): Promise<void> {
-        // const { teamSchema1, teamSchema2 } = await welcome();
-
-        const teamSchema1 = {
-            player1: 'juan',
-            player2: 'Maria'
-        },
-            teamSchema2 = {
-                player1: 'Carla',
-                player2: 'Pedro'
-            };
-
+        const { teamSchema1, teamSchema2 } = await welcome();
         this.board.init(teamSchema1, teamSchema2);
         const players = this.board.playersArray;
         this.dealer.deal(players);
         this.dealer.monitorAndForceNextMove(this.board.nextPlayer());
-        players.forEach(p=>{
-            p.dominoes.forEach((d)=>  DominoesChain.getInstance().addDomino(d))
-            printScores(true)
-        })
-      
-        // pregunta1()
-        // pregunta2();
+        await this.pregunta1();
+        await this.pregunta2y3();
 
+    }
+
+    /**
+     * 1. Haz un programa que prepare el inicio de un juego de dominoes. Esto incluye la estructura de datos de las piezas, barajarlas, y repartirlas entre 4 jugadores. Para probar, el juego puede imprimir en la consola las piezas de cada jugador. 
+     */
+    private async pregunta1() {
+        brandLong("")
+        console.log('pregunta 1❓')
+        const { playersArray } = Board.getInstance();
+        for (const player of playersArray) {
+            console.log('player: ', player.name);
+            printHand(player.dominoes);
+            console.log('\n');
+        }
+        await askAfterPregunta1('Quieres ir a la pregunta 2?')
+    }
+
+    /**
+     * 2. Haz un programa que juegue una mano de dominoes, agregándole al punto anterior, que inicie el jugador que tenga doble seis, y que siga jugando el próximo jugador. Cuando un jugador tiene más de una opción para jugar, utiliza un algoritmo random para decidir la jugada. Debes imprimir en la consola cada jugada, o alguna otra forma de validarlas. 
+     */
+    async pregunta2y3(): Promise<void> {
+        await firstMove();
+        listenForInput();
     }
 
     public reStartRound(): void {
@@ -73,7 +80,7 @@ class Game {
     /**
      * checks the state of the game after every move.
      */
-    public monitorState() {
+    public stateMonitor():void {
         if (this.board.aPlayerHasWon()) {
             const winner = this.board.winningPlayer();
             if (winner) {
@@ -83,17 +90,20 @@ class Game {
                 }
             }
         } else if (this.board.isDeadLock()) { //if none of the players can continue
+            console.log('Hubo un tranque');
             const currentP = this.score.currentPlayer;
             const nextP = currentP ? this.board.findNextPInLine(currentP) : null;
-            if (currentP && nextP) {
+            if (currentP && nextP) {//comparing current vs. next
                 const ptsInC = currentP && currentP.totalPointsInHand();
                 const ptsInN = nextP && nextP.totalPointsInHand();
 
                 if (ptsInC <= ptsInN) { //the player with the least pts wins.
                     const winningTeam = this.board.belongingTeam(currentP)
+                    console.log(`y lo gano:, ${currentP.name} con ${ptsInC} sobre ${ptsInN} a ${nextP}.`);
                     if (winningTeam) this.roundOrGameOver(winningTeam, currentP)
                 } else {
                     const winningTeam = this.board.belongingTeam(nextP)
+                    console.log(`y lo gano:, ${nextP.name} con ${ptsInN} sobre ${ptsInC} a ${currentP}.`);
                     if (winningTeam) this.roundOrGameOver(winningTeam, nextP)
                 }
             }
@@ -117,7 +127,7 @@ class Game {
         this.score.roundIsOver = true;
         this.score.gameIsOver = true;
         this.score.writeCurrentPlayer(null);
-        await displayCelebration('game', winner, winningTeam);
+        await displayCelebration('game', winner, winningTeam, this.pregunta2y3);
     }
 
     /**
@@ -128,7 +138,7 @@ class Game {
     private async RoundOver(winner: Player, winningTeam: Team) {
         this.distributePoints(winningTeam);
         this.score.roundIsOver = true;
-        await displayCelebration('round', winner, winningTeam);
+        await displayCelebration('round', winner, winningTeam, this.pregunta2y3);
         this.reStartRound();
     }
     /**
@@ -139,7 +149,7 @@ class Game {
         const totalPoints = players && players
             .map((player) => player.totalPointsInHand())
             .reduce((sum, num) => sum + num);
-        winningTeam.points = totalPoints || 0;
+        winningTeam.points = totalPoints;
     }
 }
 

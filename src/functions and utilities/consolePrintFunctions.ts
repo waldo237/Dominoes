@@ -28,7 +28,6 @@ function printScores(withHand: boolean): void {
     const hand = currentPlayer?.dominoes;
     if (store) printChainOfDominoes(store);
     withHand ? printHand(hand || []) : "";
-    console.log("\x1b[30m", '  usa  🡐 🡒  para navegar\n');
 }
 
 /**
@@ -62,7 +61,6 @@ function printChainRecursively(dominoes: Domino[], length: number): Domino[] {
     const currDom = dominoes.shift();
     if (currDom)
         printDomino(currDom);
-    // console.log(`dir: ${currDom?.direction}  first:${currDom?.firstInserted} | ${currDom?.side1} ${currDom?.side2} next:${currDom?.next}`)
     return printChainRecursively(dominoes, length - 1);
 }
 
@@ -76,10 +74,6 @@ function printDomino(currDom: Domino) {
     if (currDom.isDouble()) {
         return printDoubles(side1, side2);
     }
-    // if (currDom.firstInserted) {
-    //     return printUpwards(side1, side2);
-    // }
-
     if (currDom.direction) {
         if (side1 !== next) {
             return printUpwards(side1, side2);

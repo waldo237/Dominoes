@@ -1,5 +1,4 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
-/* eslint-disable @typescript-eslint/no-explicit-any */
+
 
 import Domino from "../models/Domino";
 import { createInterface } from "readline";
@@ -9,6 +8,7 @@ import Score from "../models/Score";
 import { Player } from "../models/Player";
 import { Team } from "../models/Team";
 import { printHand, brandLong, printScores } from "./consolePrintFunctions";
+import Game from "../models/Game";
 
 
 const rl = createInterface({
@@ -47,14 +47,14 @@ function listenForInput(): void {
     catchInputRecursively(!Score.getInstance().roundIsOver);
 }
 
-async function catchInputRecursively(roundIsActive: boolean): Promise<boolean> {
+async function catchInputRecursively(roundIsActive: boolean ): Promise<boolean> {
     if (!roundIsActive) { //base case
         rl.on('line', () => rl.close());
         return roundIsActive;
     }
 
     const { currentPlayer } = Score.getInstance();
-    const score = Score.getInstance()//can't de-structure, needs 'this' property.
+    const score = Score.getInstance();
     if (currentPlayer) {
         const counter = 0;
         const inputted: Domino | null = null;
@@ -62,14 +62,14 @@ async function catchInputRecursively(roundIsActive: boolean): Promise<boolean> {
         const { dominoes } = currentPlayer;
         const chain = DominoesChain.getInstance();
         printScores(true); //refesh the screen if another num
-        const keyPressed = await moveHorizontally(counter, dominoes, inputted, moveWasDone);
+        const index = await moveHorizontally(counter, dominoes, inputted, moveWasDone);
 
-        if (keyPressed === 0) {
-            const playedDomino = currentPlayer.play(chain.showLeads(), inputted);
-            playedDomino && chain.addDomino(playedDomino);//put the domino in the chain
-            score.writeCurrentPlayer(Board.getInstance().nextPlayer()); //update board
 
-        }
+        const playedDomino = currentPlayer.play(chain.showLeads(), dominoes[index]);
+        console.log('userInputFunctions: what was really played', playedDomino)
+        playedDomino && chain.addDomino(playedDomino);//put the domino in the chain
+        score.writeCurrentPlayer(Board.getInstance().nextPlayer()); //update board
+        Game.getInstance().stateMonitor();
     }
     return catchInputRecursively(roundIsActive);
 }
@@ -81,11 +81,12 @@ async function catchInputRecursively(roundIsActive: boolean): Promise<boolean> {
  * Display move to the screen with the array index.
  * print title, the hand, and dominochain (always)
  * when the user selects 0, make the player play domino.
+ * return the index(counter)
  */
 async function moveHorizontally(counter: number, dominoesHand: Domino[], inputted: Domino | null, moveWasDone: boolean): Promise<number> {
-    if (moveWasDone) return 0; //base case
+    if (moveWasDone) return counter; //base case
 
-    const userInput = await askForNumber('Escoje con el 0.\n  🡐4    6🡒  ');
+    const userInput = await askForNumber(' usa  🡐(4 + Enter)   (6 + Enter)🡒  para navegar, (0 + Enter) para seleccionar: ');
     if (userInput == 6) { //arrow forward
         (counter + 1 === dominoesHand.length)
             ? counter = 0
@@ -104,6 +105,7 @@ async function moveHorizontally(counter: number, dominoesHand: Domino[], inputte
         moveWasDone = true;
     } else {
         printScores(true); //refesh the screen if another num
+        console.log('solo usa 4, 6, 0');
     }
     return moveHorizontally(counter, dominoesHand, inputted, moveWasDone);
 }
@@ -147,32 +149,11 @@ async function welcome(): Promise<{ teamSchema1: teamNames; teamSchema2: teamNam
 
 }
 /**
- * 1. Haz un programa que prepare el inicio de un juego de dominoes. Esto incluye la estructura de datos de las piezas, barajarlas, y repartirlas entre 4 jugadores. Para probar, el juego puede imprimir en la consola las piezas de cada jugador. 
+ * Is the start of the game with the player that has [6/6]
+ * @returns 
  */
-async function pregunta1() {
-    brandLong("")
-    console.log('pregunta 1❓')
-    const { playersArray } = Board.getInstance();
-    for (const player of playersArray) {
-        console.log('player: ', player.name);
-        printHand(player.dominoes);
-        console.log('\n');
-    }
-}
-/**
- * 2. Haz un programa que juegue una mano de dominoes, agregándole al punto anterior, que inicie el jugador que tenga doble seis, y que siga jugando el próximo jugador. Cuando un jugador tiene más de una opción para jugar, utiliza un algoritmo random para decidir la jugada. Debes imprimir en la consola cada jugada, o alguna otra forma de validarlas. 
- */
-async function pregunta2(): Promise<void> {
-    await Promise
-        .resolve(printScores(false))
-        .then(() => firstMove())
-        .then(() => printScores(false))
-
-    listenForInput();
-}
-
-async function firstMove() {
-
+async function firstMove(): Promise<string> {
+    let res = "";
     const score = Score.getInstance();
     const currentPlayer = Board.getInstance().nextPlayer();
     if (currentPlayer) {
@@ -185,8 +166,9 @@ async function firstMove() {
         score.writeCurrentPlayer(nextP); //update the scores after
 
         printScores(false);
-        return await ask(`La primera jugada fue efectuada por ${currentPlayer.name} with double 6.\n Estan listos para continuar?`)
+        res = await ask(`La primera jugada fue efectuada por ${currentPlayer.name} con 6/6.\n Estan listos para continuar?`)
     }
+    return res;
 }
 
 /**
@@ -196,13 +178,14 @@ async function firstMove() {
  * @param winningTeam 
  * @returns Promise<number>
  */
-async function displayCelebration(ocation: string, winner: Player, winningTeam: Team): Promise<number> {
+// eslint-disable-next-line @typescript-eslint/ban-types
+async function displayCelebration(ocation: string, winner: Player, winningTeam: Team, afterCelebration: Function): Promise<number> {
     let res = -1;
     if (ocation === 'round') {
         printScores(false);
         console.log(`%c ${winner.name} ha ganado la partida y aporto ${winningTeam && winningTeam.points}  a para su equipo! felicitaciones, ${winningTeam && winningTeam.name}🎉🎊!.`, "color:blue");
-        res = await askForNumber('presiona 0 para ir al seguir jugando.').then(answer => {
-            if (answer === 0) { pregunta2() }
+        res = await askForNumber('presiona 0 y Enter para ir al seguir jugando.').then(answer => {
+            if (answer === 0) { afterCelebration() }
             return answer || -1;
         });
     }
@@ -210,12 +193,19 @@ async function displayCelebration(ocation: string, winner: Player, winningTeam: 
         printScores(false);
         console.log("%c 💛💛GAME OVER💛💛", "color:green");
         console.log(`%c ${winner.name} gano el juego. Hooray para el equipo ${winningTeam && winningTeam.name}🎉🎊!.`, "color:blue");
-        res = await askForNumber('presiona 5 para salir de juego').then(answer => { if (answer === 5) rl.close; process.exit(0) });
-        // 🧨🧨🧨 add action for when the players want to continue the next game 🧨🧨🧨🧨
+        res = await askForNumber('presiona 5 Enter para salir de juego o 0 y Enter para continuar ').then(answer => {
+            if (answer === 0) afterCelebration();
+            if (answer === 5) rl.close; process.exit(0);
+        });
     }
     return res;
 }
 
+async function askAfterPregunta1(prompt:string): Promise<string>{
+    let res = "";
+    res =await ask(prompt);
+    return res;
+}
 
 
-export { welcome, displayCelebration, pregunta1, pregunta2, listenForInput }
+export { welcome, displayCelebration, listenForInput, firstMove, askAfterPregunta1 }

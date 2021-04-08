@@ -2,9 +2,7 @@ import DominoesChain from "./DominoesChain";
 import { Team } from "./Team";
 import { Player } from "./Player";
 import { teamNames } from "../functions and utilities/userInputFunctions";
-import { printChainOfDominoes } from "../functions and utilities/consolePrintFunctions";
 import Score from "./Score";
-
 
 
 /**
@@ -88,7 +86,6 @@ class Board {
         if (rounds === 0 && !currentPlayer) { //first round and the first player
             meetsConditions = players.find((player) => player.hasDoubleSixInRound1(rounds)); //the player with 6/6
         } else {
-            console.log('current player from next',currentPlayer )
             if(currentPlayer) meetsConditions = this.findNextPInLine(currentPlayer);
         }
         return meetsConditions || null;
