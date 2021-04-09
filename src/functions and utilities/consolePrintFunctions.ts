@@ -7,11 +7,13 @@ import Score from "../models/Score";
  * clears the console and changes its colors.
  */
 function brandLong(str: string) {
+    console.clear();
     console.log("\x1b[47m");
     // console.clear();
     console.log("\x1b[30m", '        ⚽⚽ Juego de Dominos ⚽⚽      \n');
     console.log(str);
 }
+
 /**
  * prints the information related to scores and the dominoes chain.
  * @param withHand 
@@ -26,7 +28,7 @@ function printScores(withHand: boolean): void {
     console.log(`  team2: ${team2?.points}/ ${topPoints}pts    |    Manos ganadas ${team2?.wins} `)
     console.log("\x1b[32m", `  Jugador de turno: ${currentPlayer?.name} `)
     const hand = Score.getInstance().currentPlayer?.dominoes;
-    if (store) printChainOfDominoes(store);
+    if (store.length) printChainOfDominoes(store);
     withHand ? printHand(hand || []) : "";
 }
 
@@ -51,7 +53,6 @@ function printHand(hand: Domino[]) {
  * @param dominoes
  */
 function printChainOfDominoes(dominoes: Domino[]): void {
-
     printChainRecursively([...dominoes], dominoes.length);
 }
 

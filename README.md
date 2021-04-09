@@ -6,13 +6,12 @@ El juego de domino
 
 - 28 fichas
 - 0 hasta 6
-- Todas las combinaciones posibles de 0-6 (can use recursión)
-- 7 fichas diferentes para cada uno de los números (can be the base case of a recursive function).
+- Todas las combinaciones posibles de 0-6.
+- 7 fichas diferentes para cada uno de los números .
 - ficha tiene un valor igual a la suma de los puntos en sus espacios:doble
 - 4 jugadores
 - 2 equipos
-- 7 fichas a cada jugador (base case of recursión)
-- Si algún jugador tiene más de 3 dobles, el reparto se repite.
+- 7 fichas a cada jugador
 - que inicie el jugador que tenga doble seis
 - y que siga jugando el próximo jugador.
 - cada jugador coloca una ficha en uno de los extremos de la cadena si va por un solo lado.
@@ -23,7 +22,6 @@ El juego de domino
 - Cuando un jugador tiene una sola opción de colocar ficha, después periodo de 3 segundos el programa lo hace automáticamente.
 - Cuando uno de los 4 jugadores coloca todas sus fichas: la mano es ganada por la pareja a la que pertenece dicho jugador.
 - Tranque: cuando ninguno de los 4 jugadores puede seguir colocando ninguna de sus fichas: se suman los puntos de las fichas que no han sido jugadas de cada pareja, gana la suma menor.
-- En caso de empate, la mano no cuenta a efectos de puntuación.
 - Al terminar la partida, la pareja ganadora obtiene la suma de todos los puntos de las fichas que no han sido colocadas por los cuatro jugadores.
 - Vence la partida la pareja que alcanza la puntuación acordada.
 - Haz un programa que juegue un juego hasta los 200 puntos
@@ -61,13 +59,3 @@ Translate the requirement by writing a unit test. If you have hot reloading set 
 
     - test 18: 🧪The game was ended when one of the teams.points gets to 200 🧪: • Vence la partida la pareja que alcanza la puntuación acordada.
     - test 19: 🧪All the details of changes in the game were outputed to the console🧪: •
-
-**Implementation:**
-
-Write and implement the code that fulfills the requirement. Run all tests and they should pass, if not repeat this step.
-
-**Test:**
-
-Clean up your code by refactoring.
-
-Rinse, lather and repeat.

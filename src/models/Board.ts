@@ -47,13 +47,15 @@ class Board {
         return this._team2;
     }
 
-    public winningPlayer(): Player | null {
-        return this.playersArray?.find(player => !player.hasDominoes()) || null;
+    public async winningPlayer(): Promise<Player | null> {
+        return Promise.resolve(this.playersArray.filter(player => !player.hasDominoes())[0])
     }
-    public belongingTeam(player: Player): Team | null | undefined {
-        const theTeam = [this.team1, this.team2].find(team => team?.player1 === player
-            || team?.player2 === player);
-        return theTeam;
+    public belongingTeam(player: Player): Team | null {
+
+        const theTeam = (this.team1?.player1.id === player.id || this.team1?.player2.id === player.id)
+            ? this.team1
+            : this.team2;
+        return theTeam || null;
     }
 
     /**
@@ -63,13 +65,12 @@ class Board {
      * @param param2
      */
     public isDeadLock(): boolean {
-        const deadLock = this.playersArray.filter((p) => {
+        const playersUnableToPlay = this.playersArray.filter((p) => {
             const leads = this._dominoesDisplay.showLeads();
             if (leads) return p.hasDominoes() && !p.canPlayHand(leads)
-        });
-        return deadLock?.length === 4;
+        }).length === 4;
+        return playersUnableToPlay
     }
-
 
     /**
     * The very first game starts (rounds==0) a player with [6|6] starts.

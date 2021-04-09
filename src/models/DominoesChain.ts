@@ -46,7 +46,7 @@ class DominoesChain {
     }
 
     public returnDominoes(): Domino[] {
-        return this._store.splice(0, this._store.length - 1);
+        return this._store.splice(0, this._store.length);
     }
     /**
      * Follows a complex control flow to simulate laying a domino on a table.

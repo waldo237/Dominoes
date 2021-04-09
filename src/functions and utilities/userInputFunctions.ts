@@ -54,20 +54,27 @@ async function catchInputRecursively(roundIsActive: boolean): Promise<boolean> {
 
     const { currentPlayer } = Score.getInstance();
     const score = Score.getInstance();
+    let alreadyMonintored = false;
     if (currentPlayer) {
         const counter = 0;
-        const inputted: Domino | null = null;
         const moveWasDone = false;
         const { dominoes } = currentPlayer;
         const chain = DominoesChain.getInstance();
-        if (roundIsActive) printScores(true); //refesh the screen if another num
+        const inputted: Domino | null = null;
         const index = await moveHorizontally(counter, dominoes, inputted, moveWasDone);
+        printScores(true); //refesh the screen if receiving a new input
 
         const playedDomino = currentPlayer.play(chain.showLeads(), dominoes[index]);
         playedDomino && chain.addDomino(playedDomino);//put the domino in the chain
-        score.writeCurrentPlayer(Board.getInstance().nextPlayer()); //update board
-        Game.getInstance().stateMonitor();
+        if (currentPlayer.dominoes.length === 0) {
+            Game.getInstance().stateMonitor(currentPlayer)
+            alreadyMonintored = true;
+        } else {
+            score.writeCurrentPlayer(Board.getInstance().nextPlayer()); //update board
+        }
     }
+    if (!alreadyMonintored) Game.getInstance().stateMonitor(null);
+
     return catchInputRecursively(roundIsActive);
 }
 
@@ -125,25 +132,26 @@ async function welcome(): Promise<{ teamSchema1: teamNames; teamSchema2: teamNam
         .then(() => {
             return ask('Nombre del  Jugador 1, Equipo 1? : ');
         })
-        .then((name: any) => {
+        .then((name: string) => {
             T1Names['player1'] = name;
             return ask('Nombre del  Jugador 2, Equipo 1? : ');
         })
-        .then((name: any) => {
+        .then((name: string) => {
             T1Names['player2'] = name;
             return ask('Nombre del  Jugador 1, Equipo 2? : ');
         })
-        .then((name: any) => {
+        .then((name: string) => {
             T2Names['player1'] = name;
             return ask('Nombre del  Jugador 2, Equipo 2? : ');
         })
-        .then((name: any) => {
+        .then((name: string) => {
             T2Names['player2'] = name;
         })
         .catch(e => console.log(e));
     return { teamSchema1: T1Names, teamSchema2: T2Names }
 
 }
+
 /**
  * Start the first round with [6/6]
  * @returns 
@@ -172,9 +180,9 @@ async function firstMove(): Promise<string> {
  * @returns 
  */
 async function consecutiveMove(): Promise<string> {
-    let res = "";
+    const res = "";
     const score = Score.getInstance();
-    const { currentPlayer, rounds } = Score.getInstance();
+    const { currentPlayer } = Score.getInstance();
     if (currentPlayer) {
         score.writeCurrentPlayer(currentPlayer); //update the scores before
 
@@ -184,7 +192,8 @@ async function consecutiveMove(): Promise<string> {
         const nextP = Board.getInstance().nextPlayer();
         score.writeCurrentPlayer(nextP); //update the scores after
         console.log("\x1b[34m")
-        res = await ask(`Esta es la partida número ${rounds + 1}. empezó a jugar ${currentPlayer.name}, ${currentPlayer.name} Ganó la mano anterior.\n están listos para continuar?`)
+        console.log(`Esta es la partida número ${Score.getInstance().addToRounds()}. empezó a jugar ${currentPlayer.name}, ${currentPlayer.name} Ganó la mano anterior.\n están listos para continuar?`);
+
     }
     return res;
 }
@@ -197,25 +206,27 @@ async function consecutiveMove(): Promise<string> {
  * @returns Promise<number>
  */
 // eslint-disable-next-line @typescript-eslint/ban-types
-async function displayCelebration(ocation: string, winner: Player, winningTeam: Team, afterCelebration: Function): Promise<number> {
-    let res = -1;
-    if (ocation === 'round') {
-        console.log("\x1b[31m");
-        res = await askForNumber(`${winner.name} ha ganado la partida y aporto ${winningTeam && winningTeam.points}  a para su equipo! felicitaciones, ${winningTeam && winningTeam.name} 🎉🎊!\npresiona 0 y Enter para ir al seguir jugando..`).then(answer => {
-            if (answer === 0) { afterCelebration() }
-            return answer || -1;
-        });
-    }
-    if (ocation === 'game') {
-        console.log("\x1b[34m");
-        console.log("💛💛GAME OVER💛💛");
-        console.log(`${winner.name} gano el juego. Hooray para el equipo ${winningTeam && winningTeam.name} 🎉🎊!.`);
-        res = await askForNumber('presiona 5 Enter para salir de juego o 0 y Enter para continuar ').then(answer => {
-            if (answer === 0) afterCelebration();
-            if (answer === 5) rl.close; process.exit(0); //close the rl event and the game.
-        });
-    }
-    return res;
+ function displayCelebration(ocation: string, winner: Player, winningTeam: Team, gainedPoints: number | null): void {
+  try {
+      
+      if (ocation === 'round') {
+          console.log("\x1b[31m");
+          console.log(`${winner.name} ha ganado la partida y aporto ${gainedPoints}pts  a para su equipo! felicitaciones, ${winningTeam && winningTeam.name} 🎉🎊!\npresiona  Enter para ir al seguir jugando..`)
+      }
+  
+      if (ocation === 'game') {
+          console.log("\x1b[34m");
+          console.log("💛💛GAME OVER💛💛");
+          console.log(`${winner.name} gano el juego. Hooray para el equipo ${winningTeam && winningTeam.name} 🎉🎊!.`);
+          console.log('Escriba Ctrl + C para salir de juego Enter para continuar ')
+          rl.close()
+          Score.getInstance().roundIsOver = true;
+          process.exit(0)
+      }
+  } catch (error) {
+      console.log('error at the end', error)
+  }
+
 }
 
 async function askAfterPregunta1(prompt: string): Promise<string> {

@@ -1,5 +1,6 @@
 import { pickOne } from "../functions and utilities/util";
 import { Domino } from "./Domino";
+import { v4 } from 'uuid'
 import { Leads } from "./Leads";
 
 
@@ -7,9 +8,15 @@ import { Leads } from "./Leads";
 export class Player {
     private _dominoes: Domino[] = [];
     private _name: string;
+    private _id: string = v4();
+
+
 
     constructor(name: string) {
         this._name = name;
+    }
+    public get id(): string {
+        return this._id;
     }
 
     public get name(): string {
@@ -78,8 +85,9 @@ export class Player {
                 return res = optionsAvailable[0];
             }
         }
-        console.clear()
-        console.log('❌❌❌❌❌ No va..❌❌❌❌❌')
+
+        console.log(`❌❌❌❌❌ ${this.name} no va..❌❌❌❌❌`)
+
         return res;
     }
 
@@ -124,7 +132,7 @@ export class Player {
       * @param dominos 
       */
     public returnDominoes(): Domino[] {
-        return this.dominoes.splice(0, this.dominoes.length - 1);
+        return this.dominoes.splice(0, this.dominoes.length);
     }
 
     /**

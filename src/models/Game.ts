@@ -39,7 +39,7 @@ class Game {
             // this.dealer.monitorAndForceNextMove(this.board.nextPlayer());
             await this.pregunta1();
             await this.pregunta2y3();
-            
+
         } catch (error) {
             console.log(error)
         }
@@ -58,7 +58,7 @@ class Game {
             printHand(player.dominoes);
             console.log('\n');
         }
-        await askAfterPregunta1('Quieres ir a la pregunta 2❓. Presiona Enter')
+        await askAfterPregunta1('Quieres ir a la pregunta 2 y 3❓. Presiona Enter')
     }
 
     /**
@@ -74,12 +74,16 @@ class Game {
         listenForInput();
     }
 
-    public reStartRound(): void {
-        const players = this.board.playersArray;
-        const dominoesFromThePlayers = this.collectDominoes();
-        const dominoesFromTheChain = DominoesChain.getInstance().returnDominoes()
-        this.dealer.shuffle([...dominoesFromThePlayers, ...dominoesFromTheChain])
-            .deal(players);
+    public reStartRound(): Promise<boolean> {
+        return new Promise((resolve) => {
+            const players = this.board.playersArray;
+            const dominoesFromThePlayers = this.collectDominoes();
+            const dominoesFromTheChain = DominoesChain.getInstance().returnDominoes()
+            this.dealer.shuffle([...dominoesFromThePlayers, ...dominoesFromTheChain])
+                .deal(players);
+            this.score.roundIsOver = false;
+            resolve(true)
+        })
     }
 
     private collectDominoes(): Domino[] {
@@ -92,24 +96,24 @@ class Game {
     /**
      * checks the state of the game after every move.
      */
-    public stateMonitor(): void {
-        const winner = this.board.winningPlayer();
-        if (winner !== null) {
-            const winningTeam = this.board.belongingTeam(winner)
-            if (winningTeam) {
-                this.roundOrGameOver(winningTeam, winner);
-            }
+    public async stateMonitor(trigger: Player | null): Promise<void> {
+        const winner = (trigger) ? trigger : null;
+        const winningTeam = (winner)?  this.board.belongingTeam(winner):null;
+        const deadlock = this.board.isDeadLock();
 
-        } else if (this.board.isDeadLock()) { //if none of the players can continue
+       
+    if (winner && winningTeam) {
+            this.roundOrGameOver(winningTeam, winner);
+        } else if (deadlock) { //if none of the players can continue
             console.log('Hubo un tranque');
             const currentP = this.score.currentPlayer;
             const nextP = currentP ? this.board.findNextPInLine(currentP) : null;
+
             if (currentP && nextP) {//comparing current vs. next
                 const ptsInC = currentP && currentP.totalPointsInHand();
                 const ptsInN = nextP && nextP.totalPointsInHand();
 
                 if (ptsInC <= ptsInN) { //the player with the least pts wins.
-                    const winningTeam = this.board.belongingTeam(currentP)
                     console.log(`y lo gano:, ${currentP.name} con ${ptsInC} sobre ${ptsInN} a ${nextP.name}.`);
                     if (winningTeam) this.roundOrGameOver(winningTeam, currentP)
                 } else {
@@ -122,12 +126,13 @@ class Game {
     }
 
     private roundOrGameOver(winningTeam: Team, winner: Player) {
-        this.distributePoints(winningTeam); //get the points first
-        console.log('/🚌🚙🚙🚜🚛🚛🛹🛹🚈🛵🛴🚲🚲🛹🛹🦼🦼🦽🦽🦽🦽🦽🦼🚅🚅🚅')
+        this.score.roundIsOver = true;//either or, update the baord
+       const newPoints = this.distributePoints(winningTeam); //get the points first
+        winningTeam.addWin();
         if (winningTeam.points >= this.score.topPoints) { //reached top(200)
             this.gameOver(winner, winningTeam);
         } else {
-            this.RoundOver(winner, winningTeam);
+            this.RoundOver(winner, winningTeam, newPoints);
         }
     }
 
@@ -136,13 +141,12 @@ class Game {
     */
     private async gameOver(winner: Player, winningTeam: Team): Promise<void> {
         try {
-            this.score.writeGameWinner(this.board.winningPlayer());
+            this.score.writeCurrentPlayer(null);//game starting from scratch.
+            this.score.writeGameWinner(winner);
             this.score.resetRounds();
-            this.score.roundIsOver = true;
             this.score.gameIsOver = true;
-            this.score.writeCurrentPlayer(null);
-            await displayCelebration('game', winner, winningTeam, this.pregunta2y3);
-            
+            await displayCelebration('game', winner, winningTeam, null);
+            await this.reStartRound();
         } catch (error) {
             console.log(error);
         }
@@ -153,30 +157,28 @@ class Game {
     * There is a deadlock or one player got more than 3 consecutive doubles
     * The resulting poings after a game is ended go to the winning team
     */
-    private async RoundOver(winner: Player, winningTeam: Team) {
+    private async RoundOver(winner: Player, winningTeam: Team, gainedPoints: number) {
         try {
-            
-            this.score.roundIsOver = true;
+
+            this.score.writeCurrentPlayer(winner); //allow the previous player to continue playing.
+            this.score.writeRoundWinner(winner);
             this.score.addToRounds();
-            this.score.writeCurrentPlayer(this.score.currentPlayer); //allow the previous player to continue playing.
-            this.score.writeRoundWinner(this.score.currentPlayer);
-
-            await displayCelebration('round', winner, winningTeam, this.consecutiveRound);
-            this.reStartRound();
-
+            await displayCelebration('round', winner, winningTeam,gainedPoints);
+            await this.reStartRound();
         } catch (error) {
             console.log(error);
         }
     }
+
     /**
      * After a round is over, all the points in the dominoes available, go to the winning team.
      */
-    public distributePoints(winningTeam: Team): void { //public for testing
+    public distributePoints(winningTeam: Team): number { //public for testing
         const players = this.board.playersArray;
         const totalPoints = players.map((player) => player.totalPointsInHand())
             .reduce((sum, num) => sum + num, 0);
         winningTeam.points = totalPoints;
-
+        return totalPoints;
     }
 }
 
