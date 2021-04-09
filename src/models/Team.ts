@@ -36,7 +36,7 @@ export class Team {
         this._points += value;
     }
     public get player1(): Player {
-        return this._player2;
+        return this._player1;
     }
     public get player2(): Player {
         return this._player2;

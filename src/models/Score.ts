@@ -1,6 +1,8 @@
 
 import { Player } from "./Player";
-
+/**
+ * Scores simulates a notebook where the points and scores get added.
+ */
 class Score {
     private static instance: Score;
     private _topPoints = 200;
