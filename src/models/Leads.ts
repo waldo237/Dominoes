@@ -1,4 +1,7 @@
 
+/**
+ * Leads are used by the chain of Dominoes to signal what's at each end. 
+ */
 export class Leads {
     lead1: number | null;
     lead2: number | null;

@@ -15,7 +15,7 @@ function pickOne<T>(selection: T[]): T {
  * @param items 
  * @returns 
  */
-function shuffleWithRecursion<T>(items: T[]):T[] {
+function shuffleWithRecursion<T>(items: T[]): T[] {
     const index = items.length - 1;
     return shuffler(items, index);
 }
@@ -31,7 +31,7 @@ function shuffler<T>(items: T[], itemsLeft: number): T[] {
 
     const randomNum: number = Math.floor(Math.random() * (itemsLeft - 1));
     swap(items, itemsLeft, randomNum);
-    return shuffler(items, itemsLeft-1);
+    return shuffler(items, itemsLeft - 1);
 }
 
 /**
@@ -42,14 +42,14 @@ function shuffler<T>(items: T[], itemsLeft: number): T[] {
  * @param b 
  * @returns 
  */
- function swap<T>(array: T[], a: number, b: number):void {
-     [array[a], array[b]] = [array[b], array[a]];
+function swap<T>(array: T[], a: number, b: number): void {
+    [array[a], array[b]] = [array[b], array[a]];
 }
 
 /**
  * allows to use objects as maps in Typescript
  */
- type hashMap = {
+type hashMap = {
     [key: string]: boolean
 }
 
@@ -75,14 +75,14 @@ function populateDominoes(): Domino[] {
  */
 function populateDominoesHepper(dominoes: Domino[], index: number, indexX6: number, memo: hashMap): Domino[] {
     if (indexX6 == 0) return dominoes; //base case
-    
+
     if (index === -1) { //re-start first counter
-        index = indexX6-1;
+        index = indexX6 - 1;
         indexX6 -= 1;
     }
     const pairHash = [index, indexX6].sort().join();
     if (!memo[pairHash]) { //momoize the values that are already in results.
-        
+
         memo[pairHash] = true;
         dominoes.push(new Domino(index, indexX6))
     }

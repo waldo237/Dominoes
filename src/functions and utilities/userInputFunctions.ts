@@ -206,26 +206,26 @@ async function consecutiveMove(): Promise<string> {
  * @returns Promise<number>
  */
 // eslint-disable-next-line @typescript-eslint/ban-types
- function displayCelebration(ocation: string, winner: Player, winningTeam: Team, gainedPoints: number | null): void {
-  try {
-      
-      if (ocation === 'round') {
-          console.log("\x1b[31m");
-          console.log(`${winner.name} ha ganado la partida y aporto ${gainedPoints}pts  a para su equipo! felicitaciones, ${winningTeam && winningTeam.name} 🎉🎊!\npresiona  Enter para ir al seguir jugando..`)
-      }
-  
-      if (ocation === 'game') {
-          console.log("\x1b[34m");
-          console.log("💛💛GAME OVER💛💛");
-          console.log(`${winner.name} gano el juego. Hooray para el equipo ${winningTeam && winningTeam.name} 🎉🎊!.`);
-          console.log('Escriba Ctrl + C para salir de juego Enter para continuar ')
-          rl.close()
-          Score.getInstance().roundIsOver = true;
-          process.exit(0)
-      }
-  } catch (error) {
-      console.log('error at the end', error)
-  }
+function displayCelebration(ocation: string, winner: Player, winningTeam: Team, gainedPoints: number | null): void {
+    try {
+
+        if (ocation === 'round') {
+            console.log("\x1b[31m");
+            console.log(`${winner.name} ha ganado la partida y aporto ${gainedPoints}pts  a para su equipo! felicitaciones, ${winningTeam && winningTeam.name} 🎉🎊!\npresiona  Enter para ir al seguir jugando..`)
+        }
+
+        if (ocation === 'game') {
+            console.log("\x1b[34m");
+            console.log("💛💛GAME OVER💛💛");
+            console.log(`${winner.name} gano el juego. Hooray para el equipo ${winningTeam && winningTeam.name} 🎉🎊!.`);
+            console.log('Escriba Ctrl + C para salir de juego Enter para continuar ')
+            rl.close()
+            Score.getInstance().roundIsOver = true;
+            process.exit(0)
+        }
+    } catch (error) {
+        console.log('error at the end', error)
+    }
 
 }
 

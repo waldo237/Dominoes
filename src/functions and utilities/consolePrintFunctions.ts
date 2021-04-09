@@ -8,9 +8,7 @@ import Score from "../models/Score";
  */
 function brandLong(str: string) {
     console.clear();
-    console.log("\x1b[47m");
-    // console.clear();
-    console.log("\x1b[30m", '        ⚽⚽ Juego de Dominos ⚽⚽      \n');
+    console.log("\x1b[0m", '        ⚽⚽ Juego de Dominos ⚽⚽      \n');
     console.log(str);
 }
 
@@ -45,7 +43,7 @@ function printHand(hand: Domino[]) {
             }
         }
     }
-    console.log("\x1b[30m", domsDisplay);
+    console.log("\x1b[0m", domsDisplay);
 }
 
 /**
@@ -88,7 +86,6 @@ function printDomino(currDom: Domino) {
             printUpwards(side1, side2);
         }
     }
-
 }
 
 function printUpwards(front: number, back: number): void {

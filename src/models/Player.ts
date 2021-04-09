@@ -10,8 +10,6 @@ export class Player {
     private _name: string;
     private _id: string = v4();
 
-
-
     constructor(name: string) {
         this._name = name;
     }

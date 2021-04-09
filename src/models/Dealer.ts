@@ -30,18 +30,18 @@ export class Dealer {
      */
     public shuffle(dominoes: Domino[]): Dealer {
         this.dominoes = shuffleWithRecursion(dominoes);
-        return this; 
+        return this;
     }
 
     public dominoesLength(): number {
-        
-        return this.dominoes.length; 
+
+        return this.dominoes.length;
     }
 
     /**
      * gives 7 dominoes to each player and stays with none.
      */
-    public deal(players: Player[]):void {
+    public deal(players: Player[]): void {
         players.forEach((player) => {
             const sevenDominoes = this.dominoes.splice(0, 7);
             player.receiveDominoes(sevenDominoes);

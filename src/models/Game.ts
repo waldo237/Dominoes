@@ -98,11 +98,11 @@ class Game {
      */
     public async stateMonitor(trigger: Player | null): Promise<void> {
         const winner = (trigger) ? trigger : null;
-        const winningTeam = (winner)?  this.board.belongingTeam(winner):null;
+        const winningTeam = (winner) ? this.board.belongingTeam(winner) : null;
         const deadlock = this.board.isDeadLock();
 
-       
-    if (winner && winningTeam) {
+
+        if (winner && winningTeam) {
             this.roundOrGameOver(winningTeam, winner);
         } else if (deadlock) { //if none of the players can continue
             console.log('Hubo un tranque');
@@ -127,7 +127,7 @@ class Game {
 
     private roundOrGameOver(winningTeam: Team, winner: Player) {
         this.score.roundIsOver = true;//either or, update the baord
-       const newPoints = this.distributePoints(winningTeam); //get the points first
+        const newPoints = this.distributePoints(winningTeam); //get the points first
         winningTeam.addWin();
         if (winningTeam.points >= this.score.topPoints) { //reached top(200)
             this.gameOver(winner, winningTeam);
@@ -163,7 +163,7 @@ class Game {
             this.score.writeCurrentPlayer(winner); //allow the previous player to continue playing.
             this.score.writeRoundWinner(winner);
             this.score.addToRounds();
-            await displayCelebration('round', winner, winningTeam,gainedPoints);
+            await displayCelebration('round', winner, winningTeam, gainedPoints);
             await this.reStartRound();
         } catch (error) {
             console.log(error);
