@@ -114,11 +114,11 @@ class Game {
                 const ptsInN = nextP && nextP.totalPointsInHand();
 
                 if (ptsInC <= ptsInN) { //the player with the least pts wins.
-                    console.log(`y lo gano:, ${currentP.name} con ${ptsInC} sobre ${ptsInN} a ${nextP.name}.`);
+                    console.log(`y lo gano ${currentP.name} con ${ptsInC} sobre ${ptsInN} a ${nextP.name}.`);
                     if (winningTeam) this.roundOrGameOver(winningTeam, currentP)
                 } else {
                     const winningTeam = this.board.belongingTeam(nextP)
-                    console.log(`y lo gano:, ${nextP.name} con ${ptsInN} sobre ${ptsInC} a ${currentP.name}.`);
+                    console.log(`y lo gano ${nextP.name} con ${ptsInN} sobre ${ptsInC} a ${currentP.name}.`);
                     if (winningTeam) this.roundOrGameOver(winningTeam, nextP)
                 }
             }
