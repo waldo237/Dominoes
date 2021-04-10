@@ -99,7 +99,7 @@ class Game {
         if (winner && winningTeam) {
             this.roundOrGameOver(winningTeam, winner);
         } else if (deadlock) { //if none of the players can continue
-            console.log('Hubo un tranque');
+            console.log('🔐🔐🔐🔐 Hubo un tranque! 🔒🔒🔒🔒');
             const currentP = this.score.currentPlayer;
             const nextP = currentP ? this.board.findNextPInLine(currentP) : null;
 
