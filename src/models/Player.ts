@@ -79,7 +79,7 @@ export class Player {
                 // what if the user played the wrong card? 
                 return res = optionsAvailable[0];
             } else {//the domino is null and it could only have come from dealer.
-                console.log('El arbitro decidio porque el jugador tomo demasiado tiempo.')
+                console.log('El arbitro decidio porque el jugador tomo demasiado tiempo.') //this functionality was removed
                 return res = optionsAvailable[0];
             }
         }
