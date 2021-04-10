@@ -2,6 +2,7 @@ import { pickOne } from "../functions and utilities/util";
 import { Domino } from "./Domino";
 import { v4 } from 'uuid'
 import { Leads } from "./Leads";
+import Score from "./Score";
 
 
 
@@ -50,7 +51,6 @@ export class Player {
      * @returns 
      */
     public play(leads: Leads | null, input: Domino | null): Domino | null {
-        let res: Domino | null = null;
         const optionsAvailable: Domino[] = [];
         this.dominoes.forEach((currentDomino) => {
             if (this.compareHandWithBoard(currentDomino, leads)) {
@@ -59,34 +59,35 @@ export class Player {
         });
 
         if (leads === null) { //if the dominoes chain is empty, you are the first playing.
-            if (this.hasDoubleSixInRound1(0)) {
-                return res = this.playDoubleSix(0);
-            } else if (optionsAvailable.length > 1) { //if you have more than one option
-                const selected = pickOne(optionsAvailable);//pick randomly.
-                this.dominoes.push(...optionsAvailable); //return the ones you didn't use.
-                return res = selected
+            if (this.hasDoubleSixInRound1(0) && Score.getInstance().rounds === 0) {
+                return this.playDoubleSix(0);
+            }
+            // if the player has doubles, have him, play it.
+            const index = this.dominoes.findIndex((domino) => domino.side1 === domino.side2);
+            if (index !== -1) {
+                return this.dominoes.splice(index,1)[0];
             } else {
-                return res = optionsAvailable[0]
+                return pickOne(this.dominoes);
             }
         }
         //not the first one playing
         if (optionsAvailable.length > 1) { // you have more than one option
             const selected = pickOne(optionsAvailable);//pick randomly.
             this.dominoes.push(...optionsAvailable); //return the ones you didn't use.
-            return res = selected;
+            return selected;
         } else if (optionsAvailable.length === 1) {//if there is only one option
             if (input) {//coming from the user.
                 // what if the user played the wrong card? 
-                return res = optionsAvailable[0];
+                return optionsAvailable[0];
             } else {//the domino is null and it could only have come from dealer.
                 console.log('El arbitro decidio porque el jugador tomo demasiado tiempo.') //this functionality was removed
-                return res = optionsAvailable[0];
+                return optionsAvailable[0];
             }
         }
 
         console.log(`❌❌❌❌❌ ${this.name} no va..❌❌❌❌❌`)
 
-        return res;
+        return null;
     }
 
     private snatchOne(input: Domino) {

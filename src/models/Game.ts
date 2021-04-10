@@ -1,6 +1,6 @@
 
 import { brandLong, printHand } from "../functions and utilities/consolePrintFunctions";
-import { listenForInput, displayCelebration, welcome, firstMove, askAfterPregunta1, consecutiveMove } from "../functions and utilities/userInputFunctions";
+import { listenForInput, displayCelebration, welcome, firstMove, askAfterPregunta1 } from "../functions and utilities/userInputFunctions";
 import Board from "./Board";
 import { Dealer } from "./Dealer";
 import Domino from "./Domino";
@@ -36,14 +36,13 @@ class Game {
             this.board.init(teamSchema1, teamSchema2);
             const players = this.board.playersArray;
             this.dealer.deal(players);
-            // this.dealer.monitorAndForceNextMove(this.board.nextPlayer());
             await this.pregunta1();
-            await this.pregunta2y3();
+            await this.pregunta2();
+            
 
         } catch (error) {
             console.log(error)
         }
-
     }
 
     /**
@@ -59,18 +58,14 @@ class Game {
             console.log('\n');
         }
         await askAfterPregunta1('Quieres ir a la pregunta 2 y 3❓. Presiona Enter')
+        
     }
 
     /**
      * 2. Haz un programa que juegue una mano de dominoes, agregándole al punto anterior, que inicie el jugador que tenga doble seis, y que siga jugando el próximo jugador. Cuando un jugador tiene más de una opción para jugar, utiliza un algoritmo random para decidir la jugada. Debes imprimir en la consola cada jugada, o alguna otra forma de validarlas. 
      */
-    async pregunta2y3(): Promise<void> {
-        await firstMove();
-        listenForInput();
-    }
-
-    async consecutiveRound(): Promise<void> {
-        await consecutiveMove();
+    async pregunta2(): Promise<void> {
+        await firstMove()
         listenForInput();
     }
 
@@ -100,7 +95,6 @@ class Game {
         const winner = (trigger) ? trigger : null;
         const winningTeam = (winner) ? this.board.belongingTeam(winner) : null;
         const deadlock = this.board.isDeadLock();
-
 
         if (winner && winningTeam) {
             this.roundOrGameOver(winningTeam, winner);

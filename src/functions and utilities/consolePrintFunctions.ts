@@ -6,7 +6,7 @@ import Score from "../models/Score";
 /**
  * clears the console and changes its colors.
  */
-function brandLong(str: string) {
+function brandLong(str: string):void {
     console.clear();
     console.log("\x1b[0m", '        ⚽⚽ Juego de Dominos ⚽⚽      \n');
     console.log(str);
@@ -34,7 +34,7 @@ function printScores(withHand: boolean): void {
  * prints an array of dominoes horizontally.
  * @param hand the set of dominoes to be printed.
  */
-function printHand(hand: Domino[]) {
+function printHand(hand: Domino[]):void {
     let domsDisplay = "";
     if (hand) {
         for (let i = 0; i < hand.length; i++) {
@@ -66,7 +66,7 @@ function printChainRecursively(dominoes: Domino[], length: number): Domino[] {
 /**
  * determines the direction of the domino on the console and prints it.
  */
-function printDomino(currDom: Domino) {
+function printDomino(currDom: Domino):void {
 
     const { side1, side2, next } = currDom;
 

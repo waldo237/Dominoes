@@ -42,7 +42,9 @@ function askForNumber(querry: string): Promise<number> {
         });
     });
 }
-
+/**
+ * calls a recursive function that persistently listens to user input.
+ */
 function listenForInput(): void {
     catchInputRecursively(!Score.getInstance().roundIsOver);
 }
@@ -66,11 +68,11 @@ async function catchInputRecursively(roundIsActive: boolean): Promise<boolean> {
 
         const playedDomino = currentPlayer.play(chain.showLeads(), dominoes[index]);
         playedDomino && chain.addDomino(playedDomino);//put the domino in the chain
-        if (currentPlayer.dominoes.length === 0) {
+        if (currentPlayer.dominoes.length === 0) {//if the player ran out of dominoes, trigger monitor.
             Game.getInstance().stateMonitor(currentPlayer)
             alreadyMonintored = true;
         } else {
-            score.writeCurrentPlayer(Board.getInstance().nextPlayer()); //update board
+            score.writeCurrentPlayer(Board.getInstance().nextPlayer()); //update score
         }
     }
     if (!alreadyMonintored) Game.getInstance().stateMonitor(null);
@@ -179,23 +181,16 @@ async function firstMove(): Promise<string> {
  * Start a consecutive round with the winner of the previous game.
  * @returns 
  */
-async function consecutiveMove(): Promise<string> {
-    const res = "";
+async function consecutiveMove(): Promise<void> {
+
     const score = Score.getInstance();
     const { currentPlayer } = Score.getInstance();
     if (currentPlayer) {
         score.writeCurrentPlayer(currentPlayer); //update the scores before
-
-        const selectedDomino = currentPlayer.play(null, null);
-        if (selectedDomino) DominoesChain.getInstance().addDomino(selectedDomino); //force the first move with 6/6
-
-        const nextP = Board.getInstance().nextPlayer();
-        score.writeCurrentPlayer(nextP); //update the scores after
         console.log("\x1b[34m")
-        console.log(`Esta es la partida número ${Score.getInstance().addToRounds()}. empezó a jugar ${currentPlayer.name}, ${currentPlayer.name} Ganó la mano anterior.\n están listos para continuar?`);
+        console.log(`Esta es la partida número ${Score.getInstance().rounds +1}. Empezará a jugar ${currentPlayer.name}, ${currentPlayer.name} Ganó la mano anterior.\n están listos para continuar?`);
 
     }
-    return res;
 }
 
 /**
@@ -206,12 +201,15 @@ async function consecutiveMove(): Promise<string> {
  * @returns Promise<number>
  */
 // eslint-disable-next-line @typescript-eslint/ban-types
-function displayCelebration(ocation: string, winner: Player, winningTeam: Team, gainedPoints: number | null): void {
+async function displayCelebration(ocation: string, winner: Player, winningTeam: Team, gainedPoints: number | null): Promise<void> {
+
     try {
 
         if (ocation === 'round') {
             console.log("\x1b[31m");
-            console.log(`${winner.name} ha ganado la partida y aporto ${gainedPoints}pts  a para su equipo! felicitaciones, ${winningTeam && winningTeam.name} 🎉🎊!\npresiona  Enter para ir al seguir jugando..`)
+            console.log(`${winner.name} ha ganado la partida y aporto ${gainedPoints}pts  a para su equipo! felicitaciones, ${winningTeam && winningTeam.name} 🎉🎊!\npresiona  Enter para seguir jugando..`)
+            await consecutiveMove();
+            listenForInput();
         }
 
         if (ocation === 'game') {
@@ -226,6 +224,7 @@ function displayCelebration(ocation: string, winner: Player, winningTeam: Team, 
     } catch (error) {
         console.log('error at the end', error)
     }
+
 
 }
 

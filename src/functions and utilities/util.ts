@@ -82,7 +82,6 @@ function populateDominoesHepper(dominoes: Domino[], index: number, indexX6: numb
     }
     const pairHash = [index, indexX6].sort().join();
     if (!memo[pairHash]) { //momoize the values that are already in results.
-
         memo[pairHash] = true;
         dominoes.push(new Domino(index, indexX6))
     }

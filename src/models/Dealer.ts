@@ -34,7 +34,6 @@ export class Dealer {
     }
 
     public dominoesLength(): number {
-
         return this.dominoes.length;
     }
 
